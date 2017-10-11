@@ -28,12 +28,13 @@
     <columnOverride column="LONG_VARCHAR_FIELD" jdbcType="VARCHAR" />-->  
     <table schema="resourcemetadata" tableName="resource_meta_data" domainObjectName="ResourceMetadata" enableCountByExample="false" enableUpdateByExample="false"  
         enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">  
-        <columnOverride column="FILMID" property="FILMID" />  
+        <!--<columnOverride column="FILMID" property="FILMID" />  
         <columnOverride column="FILMNAME" property="FILMNAME" />  
         <columnOverride column="TYPEID" property="TYPEID" />  
         <columnOverride column="ACTOR" property="ACTOR" />  
         <columnOverride column="DIRECTOR" property="DIRECTOR" />  
         <columnOverride column="TICKETPRICE" property="TICKETPRICE" />  
+        -->
     </table>  
   </context>
 </generatorConfiguration>
