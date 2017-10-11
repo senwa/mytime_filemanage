@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhs.mytime.filemanage.dao.ResourceMetadataMapper">
+  <resultMap id="BaseResultMap" type="com.zhs.mytime.filemanage.model.ResourceMetadata">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="regdate" jdbcType="TIMESTAMP" property="regdate" />
+    <result column="regname" jdbcType="VARCHAR" property="regname" />
+    <result column="regcode" jdbcType="VARCHAR" property="regcode" />
+    <result column="filepath" jdbcType="VARCHAR" property="filepath" />
+    <result column="filesize" jdbcType="DOUBLE" property="filesize" />
+    <result column="videoaudio_posterpath" jdbcType="VARCHAR" property="videoaudioPosterpath" />
+    <result column="filetype" jdbcType="TINYINT" property="filetype" />
+    <result column="videoaudio_duration" jdbcType="INTEGER" property="videoaudioDuration" />
+    <result column="width" jdbcType="DOUBLE" property="width" />
+    <result column="height" jdbcType="DOUBLE" property="height" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, regdate, regname, regcode, filepath, filesize, videoaudio_posterpath, filetype, 
+    videoaudio_duration, width, height
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from resource_meta_data
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from resource_meta_data
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.zhs.mytime.filemanage.model.ResourceMetadata">
+    insert into resource_meta_data (id, regdate, regname, 
+      regcode, filepath, filesize, 
+      videoaudio_posterpath, filetype, videoaudio_duration, 
+      width, height)
+    values (#{id,jdbcType=VARCHAR}, #{regdate,jdbcType=TIMESTAMP}, #{regname,jdbcType=VARCHAR}, 
+      #{regcode,jdbcType=VARCHAR}, #{filepath,jdbcType=VARCHAR}, #{filesize,jdbcType=DOUBLE}, 
+      #{videoaudioPosterpath,jdbcType=VARCHAR}, #{filetype,jdbcType=TINYINT}, #{videoaudioDuration,jdbcType=INTEGER}, 
+      #{width,jdbcType=DOUBLE}, #{height,jdbcType=DOUBLE})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhs.mytime.filemanage.model.ResourceMetadata">
+    insert into resource_meta_data
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="regdate != null">
+        regdate,
+      </if>
+      <if test="regname != null">
+        regname,
+      </if>
+      <if test="regcode != null">
+        regcode,
+      </if>
+      <if test="filepath != null">
+        filepath,
+      </if>
+      <if test="filesize != null">
+        filesize,
+      </if>
+      <if test="videoaudioPosterpath != null">
+        videoaudio_posterpath,
+      </if>
+      <if test="filetype != null">
+        filetype,
+      </if>
+      <if test="videoaudioDuration != null">
+        videoaudio_duration,
+      </if>
+      <if test="width != null">
+        width,
+      </if>
+      <if test="height != null">
+        height,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="regdate != null">
+        #{regdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="regname != null">
+        #{regname,jdbcType=VARCHAR},
+      </if>
+      <if test="regcode != null">
+        #{regcode,jdbcType=VARCHAR},
+      </if>
+      <if test="filepath != null">
+        #{filepath,jdbcType=VARCHAR},
+      </if>
+      <if test="filesize != null">
+        #{filesize,jdbcType=DOUBLE},
+      </if>
+      <if test="videoaudioPosterpath != null">
+        #{videoaudioPosterpath,jdbcType=VARCHAR},
+      </if>
+      <if test="filetype != null">
+        #{filetype,jdbcType=TINYINT},
+      </if>
+      <if test="videoaudioDuration != null">
+        #{videoaudioDuration,jdbcType=INTEGER},
+      </if>
+      <if test="width != null">
+        #{width,jdbcType=DOUBLE},
+      </if>
+      <if test="height != null">
+        #{height,jdbcType=DOUBLE},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhs.mytime.filemanage.model.ResourceMetadata">
+    update resource_meta_data
+    <set>
+      <if test="regdate != null">
+        regdate = #{regdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="regname != null">
+        regname = #{regname,jdbcType=VARCHAR},
+      </if>
+      <if test="regcode != null">
+        regcode = #{regcode,jdbcType=VARCHAR},
+      </if>
+      <if test="filepath != null">
+        filepath = #{filepath,jdbcType=VARCHAR},
+      </if>
+      <if test="filesize != null">
+        filesize = #{filesize,jdbcType=DOUBLE},
+      </if>
+      <if test="videoaudioPosterpath != null">
+        videoaudio_posterpath = #{videoaudioPosterpath,jdbcType=VARCHAR},
+      </if>
+      <if test="filetype != null">
+        filetype = #{filetype,jdbcType=TINYINT},
+      </if>
+      <if test="videoaudioDuration != null">
+        videoaudio_duration = #{videoaudioDuration,jdbcType=INTEGER},
+      </if>
+      <if test="width != null">
+        width = #{width,jdbcType=DOUBLE},
+      </if>
+      <if test="height != null">
+        height = #{height,jdbcType=DOUBLE},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhs.mytime.filemanage.model.ResourceMetadata">
+    update resource_meta_data
+    set regdate = #{regdate,jdbcType=TIMESTAMP},
+      regname = #{regname,jdbcType=VARCHAR},
+      regcode = #{regcode,jdbcType=VARCHAR},
+      filepath = #{filepath,jdbcType=VARCHAR},
+      filesize = #{filesize,jdbcType=DOUBLE},
+      videoaudio_posterpath = #{videoaudioPosterpath,jdbcType=VARCHAR},
+      filetype = #{filetype,jdbcType=TINYINT},
+      videoaudio_duration = #{videoaudioDuration,jdbcType=INTEGER},
+      width = #{width,jdbcType=DOUBLE},
+      height = #{height,jdbcType=DOUBLE}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>

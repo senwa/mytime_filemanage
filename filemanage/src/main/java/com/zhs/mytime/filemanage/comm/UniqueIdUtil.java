@@ -1,4 +1,6 @@
-package com.hotent.core.util;
+package com.zhs.mytime.filemanage.comm;
+
+
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -30,7 +32,7 @@ public class UniqueIdUtil {
 	
 	private static void init() {
 		try {
-			jdbcTemplate = (JdbcTemplate) AppUtil.getBean("jdbcTemplateSN");
+			jdbcTemplate = null;//(JdbcTemplate) AppUtil.getBean("jdbcTemplateSN");
 			String path = FileUtil.getClassesPath() + "conf/app.properties".replace("/", File.separator);
 			String strAdjust = FileUtil.readFromProperties(path, "genId.adjust");
 			if (strAdjust != null) {
