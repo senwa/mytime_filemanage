@@ -105,5 +105,13 @@ public class ResourceMetadata implements Serializable {
 		this.height = height;
 	}
 
+	@Override
+	public String toString() {
+		return "ResourceMetadata [id=" + id + ", regdate=" + regdate + ", regname=" + regname + ", regcode=" + regcode
+				+ ", filepath=" + filepath + ", filesize=" + filesize + ", videoaudioPosterpath=" + videoaudioPosterpath
+				+ ", filetype=" + filetype + ", videoaudioDuration=" + videoaudioDuration + ", width=" + width
+				+ ", height=" + height + "]";
+	}
+
 	
 }
