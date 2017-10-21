@@ -44,7 +44,4 @@ public class ResourceMetadataMapperService {
 		return dao.updateByPrimaryKey(record);
 	}
 
-	public void delete(Long id){
-		dao.delete(id);
-	}
 }

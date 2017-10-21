@@ -1,4 +1,4 @@
-CREATE TABLE mytime.resource_meta_data (
+CREATE TABLE `resource_meta_data` (
   `id` varchar(40) NOT NULL,
   `regdate` datetime DEFAULT NULL,
   `regname` varchar(40) DEFAULT NULL,
@@ -10,6 +10,10 @@ CREATE TABLE mytime.resource_meta_data (
   `videoaudio_duration` int(10) DEFAULT NULL COMMENT '视频或者音频时长',
   `width` double(4,2) DEFAULT NULL,
   `height` double(4,0) DEFAULT NULL,
+  `clientinfo` text,
+  `longitude` varchar(20) DEFAULT NULL,
+  `latitude` varchar(20) DEFAULT NULL,
+  `location_msg` varchar(500) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `metadata_code_index` (`regcode`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

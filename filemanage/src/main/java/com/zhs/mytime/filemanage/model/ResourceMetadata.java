@@ -1,117 +1,155 @@
 package com.zhs.mytime.filemanage.model;
 
-import java.io.Serializable;
 import java.util.Date;
 
-public class ResourceMetadata implements Serializable {
+public class ResourceMetadata {
+    private String id;
 
-	private String id;
-	private Date regdate;
-	private String regname;
-	private String regcode;
-	private String filepath;
-	private Double filesize;
-	private String videoaudioPosterpath;
-	private Byte filetype;
-	private Integer videoaudioDuration;
-	private Double width;
-	private Double height;
+    private Date regdate;
 
-	public String getId() {
-		return id;
-	}
+    private String regname;
 
-	public void setId(String id) {
-		this.id = id == null ? null : id.trim();
-	}
+    private String regcode;
 
-	public Date getRegdate() {
-		return regdate;
-	}
+    private String filepath;
 
-	public void setRegdate(Date regdate) {
-		this.regdate = regdate;
-	}
+    private Double filesize;
 
-	public String getRegname() {
-		return regname;
-	}
+    private String videoaudioPosterpath;
 
-	public void setRegname(String regname) {
-		this.regname = regname == null ? null : regname.trim();
-	}
+    private Byte filetype;
 
-	public String getRegcode() {
-		return regcode;
-	}
+    private Integer videoaudioDuration;
 
-	public void setRegcode(String regcode) {
-		this.regcode = regcode == null ? null : regcode.trim();
-	}
+    private Double width;
 
-	public String getFilepath() {
-		return filepath;
-	}
+    private Double height;
 
-	public void setFilepath(String filepath) {
-		this.filepath = filepath == null ? null : filepath.trim();
-	}
+    private String longitude;
 
-	public Double getFilesize() {
-		return filesize;
-	}
+    private String latitude;
 
-	public void setFilesize(Double filesize) {
-		this.filesize = filesize;
-	}
+    private String locationMsg;
 
-	public String getVideoaudioPosterpath() {
-		return videoaudioPosterpath;
-	}
+    private String clientinfo;
 
-	public void setVideoaudioPosterpath(String videoaudioPosterpath) {
-		this.videoaudioPosterpath = videoaudioPosterpath == null ? null : videoaudioPosterpath.trim();
-	}
+    public String getId() {
+        return id;
+    }
 
-	public Byte getFiletype() {
-		return filetype;
-	}
+    public void setId(String id) {
+        this.id = id == null ? null : id.trim();
+    }
 
-	public void setFiletype(Byte filetype) {
-		this.filetype = filetype;
-	}
+    public Date getRegdate() {
+        return regdate;
+    }
 
-	public Integer getVideoaudioDuration() {
-		return videoaudioDuration;
-	}
+    public void setRegdate(Date regdate) {
+        this.regdate = regdate;
+    }
 
-	public void setVideoaudioDuration(Integer videoaudioDuration) {
-		this.videoaudioDuration = videoaudioDuration;
-	}
+    public String getRegname() {
+        return regname;
+    }
 
-	public Double getWidth() {
-		return width;
-	}
+    public void setRegname(String regname) {
+        this.regname = regname == null ? null : regname.trim();
+    }
 
-	public void setWidth(Double width) {
-		this.width = width;
-	}
+    public String getRegcode() {
+        return regcode;
+    }
 
-	public Double getHeight() {
-		return height;
-	}
+    public void setRegcode(String regcode) {
+        this.regcode = regcode == null ? null : regcode.trim();
+    }
 
-	public void setHeight(Double height) {
-		this.height = height;
-	}
+    public String getFilepath() {
+        return filepath;
+    }
 
-	@Override
-	public String toString() {
-		return "ResourceMetadata [id=" + id + ", regdate=" + regdate + ", regname=" + regname + ", regcode=" + regcode
-				+ ", filepath=" + filepath + ", filesize=" + filesize + ", videoaudioPosterpath=" + videoaudioPosterpath
-				+ ", filetype=" + filetype + ", videoaudioDuration=" + videoaudioDuration + ", width=" + width
-				+ ", height=" + height + "]";
-	}
+    public void setFilepath(String filepath) {
+        this.filepath = filepath == null ? null : filepath.trim();
+    }
 
-	
+    public Double getFilesize() {
+        return filesize;
+    }
+
+    public void setFilesize(Double filesize) {
+        this.filesize = filesize;
+    }
+
+    public String getVideoaudioPosterpath() {
+        return videoaudioPosterpath;
+    }
+
+    public void setVideoaudioPosterpath(String videoaudioPosterpath) {
+        this.videoaudioPosterpath = videoaudioPosterpath == null ? null : videoaudioPosterpath.trim();
+    }
+
+    public Byte getFiletype() {
+        return filetype;
+    }
+
+    public void setFiletype(Byte filetype) {
+        this.filetype = filetype;
+    }
+
+    public Integer getVideoaudioDuration() {
+        return videoaudioDuration;
+    }
+
+    public void setVideoaudioDuration(Integer videoaudioDuration) {
+        this.videoaudioDuration = videoaudioDuration;
+    }
+
+    public Double getWidth() {
+        return width;
+    }
+
+    public void setWidth(Double width) {
+        this.width = width;
+    }
+
+    public Double getHeight() {
+        return height;
+    }
+
+    public void setHeight(Double height) {
+        this.height = height;
+    }
+
+    public String getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(String longitude) {
+        this.longitude = longitude == null ? null : longitude.trim();
+    }
+
+    public String getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(String latitude) {
+        this.latitude = latitude == null ? null : latitude.trim();
+    }
+
+    public String getLocationMsg() {
+        return locationMsg;
+    }
+
+    public void setLocationMsg(String locationMsg) {
+        this.locationMsg = locationMsg == null ? null : locationMsg.trim();
+    }
+
+    public String getClientinfo() {
+        return clientinfo;
+    }
+
+    public void setClientinfo(String clientinfo) {
+        this.clientinfo = clientinfo == null ? null : clientinfo.trim();
+    }
 }
