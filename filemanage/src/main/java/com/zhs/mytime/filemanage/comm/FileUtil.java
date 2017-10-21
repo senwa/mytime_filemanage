@@ -9,6 +9,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 
 
 public class FileUtil {
-	public static void uploadFile(byte[] file, String filePath, String fileName) throws Exception { 
+	public static void uploadFile(byte[] file, String filePath, String fileName) throws FileNotFoundException,IOException { 
         File targetFile = new File(filePath);  
         if(!targetFile.exists()){    
             targetFile.mkdirs();    

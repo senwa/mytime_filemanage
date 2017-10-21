@@ -1,6 +1,7 @@
 package com.zhs.mytime.filemanage.controller;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,15 +38,36 @@ public class FileUploadController {
             HttpServletRequest request) {
     	ResultMessage res = new ResultMessage(ResultMessage.SUCCESS, "上传成功");
     	try{
+    		
+    		//转移到service层
+    		
+    		//路径定义规则(便于存储备份用这种格式):../年份s/月份s/人的微信号s/
+    		
     		//String contentType = file.getContentType();
     		String fileName = file.getOriginalFilename();
 	        String filePath = fileuploadFolder;
 	        FileUtil.uploadFile(file.getBytes(), filePath, System.currentTimeMillis()+fileName);
+    	}catch(FileNotFoundException e){
+    		e.printStackTrace();
+    		res.setResult(ResultMessage.FAIL);
+    		res.setCause(e.getMessage());
+    		res.setMessage("上传失败,创建文件失败");
+    	}catch(IOException e){
+    		e.printStackTrace();
+    		res.setResult(ResultMessage.FAIL);
+    		res.setCause(e.getMessage());
+    		res.setMessage("上传失败,写入文件失败");
     	}catch(Exception e){
     		e.printStackTrace();
     		res.setResult(ResultMessage.FAIL);
     		res.setCause(e.getMessage());
     		res.setMessage("上传失败");
+    	}finally{
+    		//如果是写入文件失败,同时删除数据库记录,提醒用户重新上传
+    		
+    		
+    		//如果写入数据库记录失败,提醒用户重新上传,并转移当前文件到失败备份文件夹下以备恢复
+    		
     	}
         
         //返回json
