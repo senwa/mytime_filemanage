@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 @SpringBootApplication
-@MapperScan("com.zhs.mytime")
+@MapperScan("com.zhs.mytime.filemanage.dao")
 @EnableConfigurationProperties
 public class FilemanageApplication {
 
