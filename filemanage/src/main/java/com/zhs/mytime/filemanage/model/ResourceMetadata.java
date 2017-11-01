@@ -2,6 +2,8 @@ package com.zhs.mytime.filemanage.model;
 
 import java.util.Date;
 
+import com.zhs.mytime.filemanage.comm.FileUtil;
+
 public class ResourceMetadata {
     private String id;
 
@@ -151,5 +153,24 @@ public class ResourceMetadata {
 
     public void setClientinfo(String clientinfo) {
         this.clientinfo = clientinfo == null ? null : clientinfo.trim();
+    }
+    
+    public final static byte UNKNOW = (byte) 0;//未知
+    public final static byte PIC = (byte) 1;//图片
+    public final static byte AUDIO = (byte) 2;//音频
+    public final static byte VIDEO = (byte) 3;//视频
+    
+    //根据文件名返回文件类别
+    public static byte getFileType(String fileName){
+    	String fileExt = FileUtil.getFileExt(fileName);
+    	if("jpg".equalsIgnoreCase(fileExt)||"jpeg".equalsIgnoreCase(fileExt)||"png".equalsIgnoreCase(fileExt)||"gif".equalsIgnoreCase(fileExt)||"icon".equalsIgnoreCase(fileExt)||"bmp".equalsIgnoreCase(fileExt)){
+    		return PIC;
+    	}else if("silk".equalsIgnoreCase(fileExt)||"wav".equalsIgnoreCase(fileExt)||"mp3".equalsIgnoreCase(fileExt)||"aac".equalsIgnoreCase(fileExt)||"mid".equalsIgnoreCase(fileExt)||"OGG".equalsIgnoreCase(fileExt)){ 
+    		return AUDIO;
+    	}else if("mp4".equalsIgnoreCase(fileExt)||"avi".equalsIgnoreCase(fileExt)||"rm".equalsIgnoreCase(fileExt)||"wmv".equalsIgnoreCase(fileExt)){
+    		return VIDEO;
+    	}else{
+    		return UNKNOW;
+    	}
     }
 }

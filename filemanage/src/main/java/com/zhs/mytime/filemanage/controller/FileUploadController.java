@@ -1,16 +1,24 @@
 package com.zhs.mytime.filemanage.controller;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,9 +28,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import com.zhs.mytime.filemanage.comm.FileUtil;
 import com.zhs.mytime.filemanage.comm.ResultMessage;
+import com.zhs.mytime.filemanage.comm.StringUtils;
+import com.zhs.mytime.filemanage.comm.UniqueIdUtil;
+import com.zhs.mytime.filemanage.model.ResourceMetadata;
+import com.zhs.mytime.filemanage.service.ResourceMetadataMapperService;
 
 @Controller
 public class FileUploadController {
+	@Resource
+	private ResourceMetadataMapperService resMetadataService;
+	
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());  
 	@Value("${fileuploadFolder}")
 	private String fileuploadFolder;
 	//跳转到上传文件的页面
@@ -37,37 +53,151 @@ public class FileUploadController {
     public @ResponseBody ResultMessage uploadImg(@RequestParam("file") MultipartFile file,
             HttpServletRequest request) {
     	ResultMessage res = new ResultMessage(ResultMessage.SUCCESS, "上传成功");
+    	String filePath = null;
+    	String fileName = "";
+    	String wrongFileDir = fileuploadFolder+File.separator+"wrong"+File.separator;
     	try{
     		
-    		//转移到service层
+    		fileName = file.getOriginalFilename();
+    		String unionId = request.getParameter("unionId");
+    		String wxaccount = request.getParameter("wxaccount");//微信账号名
+    		if(StringUtils.isEmpty(unionId)){
+    			logger.warn("unionId为空上传资源:"+fileName);
+    			unionId = "unknown";
+    		}
     		
-    		//路径定义规则(便于存储备份用这种格式):../年份s/月份s/人的微信号s/
+    		logger.info("unionId",unionId);
     		
-    		//String contentType = file.getContentType();
-    		String fileName = file.getOriginalFilename();
-	        String filePath = fileuploadFolder;
-	        FileUtil.uploadFile(file.getBytes(), filePath, System.currentTimeMillis()+fileName);
+    		String contentType = file.getContentType();
+    		logger.info("contentType",contentType);
+    		Calendar cal = Calendar.getInstance();
+    		//路径定义规则(便于存储备份用这种格式):../人的微信号unionIds/年份s/月份s/
+	        filePath = fileuploadFolder+unionId+File.separator+cal.get(Calendar.YEAR)+File.separator+(cal.get(Calendar.MONTH)+1)+File.separator;
+	        fileName = System.currentTimeMillis()+fileName;
+	        
+	        FileUtil.uploadFile(file.getBytes(), filePath, fileName);
+	        
+	        //写数据库
+	        ResourceMetadata record = new ResourceMetadata();
+	        record.setId(UniqueIdUtil.getGuidRan());
+	        record.setClientinfo(request.getParameter("clientinfo"));//客户端信息(网页端待测试)
+	        record.setFilepath(filePath);
+	        record.setFilesize(Double.valueOf(file.getSize()));
+	        record.setFiletype(ResourceMetadata.getFileType(fileName));
+	        String locationMsg = request.getParameter("locationMsg");
+        	record.setLocationMsg(locationMsg);
+        	record.setRegcode(unionId);
+        	record.setRegname(wxaccount);
+        	record.setRegdate(new Date());
+	        
+        	String latStr = request.getParameter("lat");
+        	String lngStr = request.getParameter("lng");
+        	String duration = request.getParameter("duration");
+        	String heightStr = request.getParameter("height");
+        	String widthStr = request.getParameter("width");
+        	
+	        if(record.getFiletype().byteValue()==ResourceMetadata.PIC){
+	        	//如果传入的参数中存在信息,优先使用传进来的参数信息
+	        	Map<String,String> imageInfo = FileUtil.getImageInfo(file.getInputStream());
+	        	
+	        	
+	        	if(StringUtils.isNotEmpty(heightStr)&&StringUtils.isNumberic(heightStr)){
+	        		record.setHeight(Double.valueOf(heightStr));
+	        	}else{
+	        		if(imageInfo!=null){
+	        			record.setHeight(Double.valueOf(imageInfo.get("height")));
+	        		}else{
+	        			logger.warn(record.getId()+"未设置高度");
+	        		}
+	        	}
+	        	
+	        	if(StringUtils.isNotEmpty(widthStr)&&StringUtils.isNumberic(widthStr)){
+	        		record.setWidth(Double.valueOf(widthStr));
+	        	}else{
+	        		if(imageInfo!=null){
+	        			record.setWidth(Double.valueOf(imageInfo.get("width")));
+	        		}else{
+	        			logger.warn(record.getId()+"未设置宽度");
+	        		}
+	        	}
+	        	
+	        	if(StringUtils.isNotEmpty(latStr)&&StringUtils.isNumberic(latStr)){
+	        		record.setLatitude(latStr);
+	        	}else{
+	        		if(imageInfo!=null){
+	        			record.setLatitude(imageInfo.get("lat"));
+	        		}else{
+	        			logger.warn(record.getId()+"未设置经纬度");
+	        		}
+	        	}
+	        	
+	        	if(StringUtils.isNotEmpty(lngStr)&&StringUtils.isNumberic(lngStr)){
+	        		record.setLongitude(lngStr);
+	        	}else{
+	        		if(imageInfo!=null){
+	        			record.setLongitude(imageInfo.get("lng"));
+	        		}else{
+	        			logger.warn(record.getId()+"未设置经纬度");
+	        		}
+	        	}
+	        	
+	        }else if(record.getFiletype().byteValue()==ResourceMetadata.AUDIO){
+	        	
+	        	record.setLatitude(latStr);
+	        	record.setLongitude(lngStr);
+	        	if(StringUtils.isNotEmpty(duration)&&StringUtils.isNumberic(duration)){
+	        		try{
+	        			record.setVideoaudioDuration(Integer.valueOf(duration));
+	        		}catch(NumberFormatException fe){
+	        			logger.error(duration+"转为整型失败!");
+	        		}
+	        	}
+	        	
+	        }else if(record.getFiletype().byteValue()==ResourceMetadata.VIDEO){
+	        	record.setLatitude(latStr);
+	        	record.setLongitude(lngStr);
+	        	if(StringUtils.isNotEmpty(duration)&&StringUtils.isNumberic(duration)){
+	        		try{
+	        			record.setVideoaudioDuration(Integer.valueOf(duration));
+	        		}catch(NumberFormatException fe){
+	        			logger.error(duration+"转为整型失败!");
+	        		}
+	        	}
+	        	
+	        	if(StringUtils.isNotEmpty(heightStr)&&StringUtils.isNumberic(heightStr)){
+	        		record.setHeight(Double.valueOf(heightStr));
+	        	}
+
+	        	if(StringUtils.isNotEmpty(widthStr)&&StringUtils.isNumberic(widthStr)){
+	        		record.setWidth(Double.valueOf(widthStr));
+	        	}
+	        }
+	        
+	        resMetadataService.insert(record);
+	        
     	}catch(FileNotFoundException e){
     		e.printStackTrace();
+    		logger.error(e.getMessage());
     		res.setResult(ResultMessage.FAIL);
     		res.setCause(e.getMessage());
     		res.setMessage("上传失败,创建文件失败");
     	}catch(IOException e){
     		e.printStackTrace();
+    		logger.error(e.getMessage());
     		res.setResult(ResultMessage.FAIL);
     		res.setCause(e.getMessage());
     		res.setMessage("上传失败,写入文件失败");
     	}catch(Exception e){
     		e.printStackTrace();
+    		logger.error(fileName+e.getMessage());
     		res.setResult(ResultMessage.FAIL);
     		res.setCause(e.getMessage());
     		res.setMessage("上传失败");
-    	}finally{
-    		//如果是写入文件失败,同时删除数据库记录,提醒用户重新上传
     		
-    		
-    		//如果写入数据库记录失败,提醒用户重新上传,并转移当前文件到失败备份文件夹下以备恢复
-    		
+    		if(StringUtils.isNotEmpty(filePath+fileName)){
+    			//移动文件
+        		FileUtil.moveFile(filePath+fileName, wrongFileDir+fileName);
+    		}
     	}
         
         //返回json

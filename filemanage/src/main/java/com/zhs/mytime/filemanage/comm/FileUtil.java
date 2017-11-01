@@ -26,14 +26,26 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.drew.imaging.jpeg.JpegMetadataReader;
+import com.drew.imaging.jpeg.JpegProcessingException;
+import com.drew.metadata.Directory;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.Tag;
+
 
 public class FileUtil {
+	private  final static Logger logger = LoggerFactory.getLogger(FileUtil.class);
 	public static void uploadFile(byte[] file, String filePath, String fileName) throws FileNotFoundException,IOException { 
         File targetFile = new File(filePath);  
         if(!targetFile.exists()){    
@@ -558,6 +570,52 @@ public class FileUtil {
 		}
 		return "";
 	}
+	
+	/**
+	 * 获取图片中的位置等信息
+	 * 
+	 * */
+	public static Map<String, String> getImageInfo(InputStream inputStream){
+		
+		Metadata metadata;
+		try {
+			 metadata = JpegMetadataReader.readMetadata(inputStream);
+			 Map<String,String> resMap = new HashMap<String,String>();
+			 for(Directory directory : metadata.getDirectories()){
+		            for(Tag tag : directory.getTags()){
+		                logger.debug("name : " + tag.getTagName() + "  -->");
+		                logger.debug("desc : " + tag.getDescription());
+		                
+		                String tagName = tag.getTagName();  //标签名
+		                String desc = tag.getDescription(); //标签信息
+		                
+		                if (tagName.equals("Image Height")) {  
+		                	logger.debug("图片高度: "+desc);
+		                	resMap.put("height", desc);
+		                } else if (tagName.equals("Image Width")) {  
+		                	logger.debug("图片宽度: "+desc);
+		                	resMap.put("width", desc);
+		                } else if (tagName.equals("Date/Time Original")) {  
+		                	logger.debug("拍摄时间: "+desc);
+		                	resMap.put("createtime", desc);
+		                }else if (tagName.equals("GPS Latitude")) {  
+		                	logger.debug("纬度 : "+desc);
+		                	resMap.put("lat", desc);
+		                } else if (tagName.equals("GPS Longitude")) {  
+		                	logger.debug("经度: "+desc);
+		                	resMap.put("lng", desc);
+		                }
+		            }
+		        }
+			return resMap;
+		} catch (JpegProcessingException e) {
+			e.printStackTrace();
+			logger.error(e.getMessage());
+			return null;
+		}
+        
+	}
+	
 	
 	
 	/**
