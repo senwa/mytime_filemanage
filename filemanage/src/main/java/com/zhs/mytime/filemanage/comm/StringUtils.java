@@ -260,4 +260,24 @@ public class StringUtils {
 			return true;
 			
 		}
+		
+		/**
+		 * 截取字符串中最开始的数字 如1023 asda 截取1023
+		 * */
+		public static String getNumberInString(String str){
+			String res = null;
+			if(StringUtils.isNotEmpty(str)){
+				Pattern pt =  Pattern.compile("\\d+", Pattern.CASE_INSENSITIVE);
+				Matcher mt = pt.matcher(str);
+				if(mt.find()){
+					res = mt.group(0);
+				}
+			}
+			return res;
+		}
+		
+		/*public static void main(String args[]){
+			
+			System.out.println(getNumberInString("12321 sada 21sdfs sdf 33"));
+		}*/
 }

@@ -591,19 +591,19 @@ public class FileUtil {
 		                
 		                if (tagName.equals("Image Height")) {  
 		                	logger.debug("图片高度: "+desc);
-		                	resMap.put("height", desc);
+		                	resMap.put("height", StringUtils.getNumberInString(desc));
 		                } else if (tagName.equals("Image Width")) {  
 		                	logger.debug("图片宽度: "+desc);
-		                	resMap.put("width", desc);
+		                	resMap.put("width", StringUtils.getNumberInString(desc));
 		                } else if (tagName.equals("Date/Time Original")) {  
 		                	logger.debug("拍摄时间: "+desc);
 		                	resMap.put("createtime", desc);
 		                }else if (tagName.equals("GPS Latitude")) {  
 		                	logger.debug("纬度 : "+desc);
-		                	resMap.put("lat", desc);
+		                	resMap.put("lat", StringUtils.getNumberInString(desc));
 		                } else if (tagName.equals("GPS Longitude")) {  
 		                	logger.debug("经度: "+desc);
-		                	resMap.put("lng", desc);
+		                	resMap.put("lng", StringUtils.getNumberInString(desc));
 		                }
 		            }
 		        }

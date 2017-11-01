@@ -6,22 +6,34 @@
     <logger name="org.springboot.sample" level="debug" />
     <logger name="com.alibaba.druid" level="debug" />
     <logger name=" com.zhs.mytime.filemanage" level="debug" />
-    <property name="log.path" value="D:/log/logback.log" />
-	
-	 <!-- 控制台输出 -->  
-    <appender name="file"  class="ch.qos.logback.core.rolling.RollingFileAppender">
+    <property name="log.path" value="/mytime/logback.log" />
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <!-- <filter class="com.example.logback.filter.MyFilter" /> -->
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+              <level>info</level>
+        </filter>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} %contextName [%thread] %-5level %logger{36} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="file"
+        class="ch.qos.logback.core.rolling.RollingFileAppender">
         <file>${log.path}</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <!-- 每天一归档 -->
             <fileNamePattern>${log.path}.%d{yyyy-MM-dd}.zip</fileNamePattern>
         </rollingPolicy>
+
         <encoder>
             <pattern>%date %level [%thread] %logger{36} [%file : %line] %msg%n
             </pattern>
         </encoder>
     </appender>
-   
-   	<root level="debug">
-        <appender-ref ref="FILE"/> 
-    </root> 
+
+    <root level="info">
+        <appender-ref ref="console" />
+        <appender-ref ref="file" />
+    </root>
 </configuration>
