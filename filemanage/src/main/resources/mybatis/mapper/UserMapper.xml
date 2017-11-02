@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zhs.mytime.filemanage.dao.UserMapper">
+  <resultMap id="BaseResultMap" type="com.zhs.mytime.filemanage.model.User">
+    <id column="id" jdbcType="VARCHAR" property="id" />
+    <result column="account" jdbcType="VARCHAR" property="account" />
+    <result column="pwd" jdbcType="VARCHAR" property="pwd" />
+    <result column="fullname" jdbcType="VARCHAR" property="fullname" />
+    <result column="sex" jdbcType="BIT" property="sex" />
+    <result column="city" jdbcType="VARCHAR" property="city" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
+    <result column="country" jdbcType="VARCHAR" property="country" />
+    <result column="email" jdbcType="VARCHAR" property="email" />
+    <result column="phone" jdbcType="VARCHAR" property="phone" />
+    <result column="state" jdbcType="TINYINT" property="state" />
+    <result column="union_id" jdbcType="VARCHAR" property="unionId" />
+    <result column="regdate" jdbcType="TIMESTAMP" property="regdate" />
+    <result column="last_login_time" jdbcType="TIMESTAMP" property="lastLoginTime" />
+    <result column="open_id" jdbcType="VARCHAR" property="openId" />
+    <result column="last_Password_Reset_Date" jdbcType="TIMESTAMP" property="lastPasswordResetDate" />
+    <result column="roles" jdbcType="VARCHAR" property="roles" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, account, pwd, fullname, sex, city, province, country, email, phone, state, union_id, 
+    regdate, last_login_time, open_id, last_Password_Reset_Date, roles
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where id = #{id,jdbcType=VARCHAR}
+  </select>
+  
+   <select id="getByAccountOrEmailOrPhoneOrUnionId" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where account = #{account,jdbcType=VARCHAR} or email = #{email,jdbcType=VARCHAR} or phone = #{phone,jdbcType=VARCHAR}  or union_id = #{unionId,jdbcType=VARCHAR} 
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from user
+    where id = #{id,jdbcType=VARCHAR}
+  </delete>
+  <insert id="insert" parameterType="com.zhs.mytime.filemanage.model.User">
+    insert into user (id, account, pwd, 
+      fullname, sex, city, province, 
+      country, email, phone, 
+      state, union_id, regdate, 
+      last_login_time, open_id, last_Password_Reset_Date, 
+      roles)
+    values (#{id,jdbcType=VARCHAR}, #{account,jdbcType=VARCHAR}, #{pwd,jdbcType=VARCHAR}, 
+      #{fullname,jdbcType=VARCHAR}, #{sex,jdbcType=BIT}, #{city,jdbcType=VARCHAR}, #{province,jdbcType=VARCHAR}, 
+      #{country,jdbcType=VARCHAR}, #{email,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
+      #{state,jdbcType=TINYINT}, #{unionId,jdbcType=VARCHAR}, #{regdate,jdbcType=TIMESTAMP}, 
+      #{lastLoginTime,jdbcType=TIMESTAMP}, #{openId,jdbcType=VARCHAR}, #{lastPasswordResetDate,jdbcType=TIMESTAMP}, 
+      #{roles,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.zhs.mytime.filemanage.model.User">
+    insert into user
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="account != null">
+        account,
+      </if>
+      <if test="pwd != null">
+        pwd,
+      </if>
+      <if test="fullname != null">
+        fullname,
+      </if>
+      <if test="sex != null">
+        sex,
+      </if>
+      <if test="city != null">
+        city,
+      </if>
+      <if test="province != null">
+        province,
+      </if>
+      <if test="country != null">
+        country,
+      </if>
+      <if test="email != null">
+        email,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="state != null">
+        state,
+      </if>
+      <if test="unionId != null">
+        union_id,
+      </if>
+      <if test="regdate != null">
+        regdate,
+      </if>
+      <if test="lastLoginTime != null">
+        last_login_time,
+      </if>
+      <if test="openId != null">
+        open_id,
+      </if>
+      <if test="lastPasswordResetDate != null">
+        last_Password_Reset_Date,
+      </if>
+      <if test="roles != null">
+        roles,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=VARCHAR},
+      </if>
+      <if test="account != null">
+        #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="pwd != null">
+        #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="fullname != null">
+        #{fullname,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=BIT},
+      </if>
+      <if test="city != null">
+        #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null">
+        #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="country != null">
+        #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        #{state,jdbcType=TINYINT},
+      </if>
+      <if test="unionId != null">
+        #{unionId,jdbcType=VARCHAR},
+      </if>
+      <if test="regdate != null">
+        #{regdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastLoginTime != null">
+        #{lastLoginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="openId != null">
+        #{openId,jdbcType=VARCHAR},
+      </if>
+      <if test="lastPasswordResetDate != null">
+        #{lastPasswordResetDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="roles != null">
+        #{roles,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.zhs.mytime.filemanage.model.User">
+    update user
+    <set>
+      <if test="account != null">
+        account = #{account,jdbcType=VARCHAR},
+      </if>
+      <if test="pwd != null">
+        pwd = #{pwd,jdbcType=VARCHAR},
+      </if>
+      <if test="fullname != null">
+        fullname = #{fullname,jdbcType=VARCHAR},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=BIT},
+      </if>
+      <if test="city != null">
+        city = #{city,jdbcType=VARCHAR},
+      </if>
+      <if test="province != null">
+        province = #{province,jdbcType=VARCHAR},
+      </if>
+      <if test="country != null">
+        country = #{country,jdbcType=VARCHAR},
+      </if>
+      <if test="email != null">
+        email = #{email,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=TINYINT},
+      </if>
+      <if test="unionId != null">
+        union_id = #{unionId,jdbcType=VARCHAR},
+      </if>
+      <if test="regdate != null">
+        regdate = #{regdate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastLoginTime != null">
+        last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="openId != null">
+        open_id = #{openId,jdbcType=VARCHAR},
+      </if>
+      <if test="lastPasswordResetDate != null">
+        last_Password_Reset_Date = #{lastPasswordResetDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="roles != null">
+        roles = #{roles,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.zhs.mytime.filemanage.model.User">
+    update user
+    set account = #{account,jdbcType=VARCHAR},
+      pwd = #{pwd,jdbcType=VARCHAR},
+      fullname = #{fullname,jdbcType=VARCHAR},
+      sex = #{sex,jdbcType=BIT},
+      city = #{city,jdbcType=VARCHAR},
+      province = #{province,jdbcType=VARCHAR},
+      country = #{country,jdbcType=VARCHAR},
+      email = #{email,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      state = #{state,jdbcType=TINYINT},
+      union_id = #{unionId,jdbcType=VARCHAR},
+      regdate = #{regdate,jdbcType=TIMESTAMP},
+      last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+      open_id = #{openId,jdbcType=VARCHAR},
+      last_Password_Reset_Date = #{lastPasswordResetDate,jdbcType=TIMESTAMP},
+      roles = #{roles,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=VARCHAR}
+  </update>
+</mapper>
