@@ -1,8 +1,5 @@
 package com.zhs.mytime.filemanage.comm;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class ResultMessage{
 	
 	public final static int SUCCESS = 1;
