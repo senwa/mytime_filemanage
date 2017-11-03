@@ -5,10 +5,11 @@ import javax.annotation.Resource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import com.zhs.mytime.filemanage.comm.JwtUserFactory;
 import com.zhs.mytime.filemanage.model.User;
-
+@Service
 public class JwtUserDetailsServiceImpl implements UserDetailsService {
 
 	@Resource
