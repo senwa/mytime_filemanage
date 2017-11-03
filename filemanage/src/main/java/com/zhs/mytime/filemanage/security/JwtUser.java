@@ -17,9 +17,9 @@ public class JwtUser implements UserDetails {
     private final String pwd;
     private final String email;
     private final String phone;
-    private final int state;//后期根据state区分账号状态
+    private final Byte state;//后期根据state区分账号状态
     private final Date lastPasswordReset;
-    private final Collection<? extends GrantedAuthority> authorities;
+    private final Collection<GrantedAuthority> authorities;
 	
     public JwtUser(
             String id,
@@ -31,7 +31,7 @@ public class JwtUser implements UserDetails {
             String phone,
             Date lastPasswordReset,
             Byte state,
-            Collection<? extends GrantedAuthority> authorities) {
+            Collection<GrantedAuthority> authorities) {
         this.id = id;
         this.fullName = fullName;
         this.pwd = pwd;
@@ -45,9 +45,8 @@ public class JwtUser implements UserDetails {
     }
     
 	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-
-		return null;
+	public Collection<GrantedAuthority> getAuthorities() {
+		return this.authorities;
 	}
 	
 	@JsonIgnore

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.zhs.mytime.filemanage.model.User;
 import com.zhs.mytime.filemanage.security.JwtAuthenticationRequest;
@@ -26,16 +27,16 @@ public class AuthController {
 	    private AuthService authService;
 
 	    @RequestMapping(value = "${jwt.route.authentication.path}", method = RequestMethod.POST)
-	    public ResponseEntity<?> createAuthenticationToken(
+	    public @ResponseBody ResponseEntity<?> createAuthenticationToken(
 	            @RequestBody JwtAuthenticationRequest authenticationRequest) throws AuthenticationException{
-	        final String token = authService.login(authenticationRequest.getUsername(), authenticationRequest.getPassword());
+	        final String token = authService.login(authenticationRequest.getAccount(), authenticationRequest.getPwd());
 
 	        // Return the token
 	        return ResponseEntity.ok(new JwtAuthenticationResponse(token));
 	    }
 
 	    @RequestMapping(value = "${jwt.route.authentication.refresh}", method = RequestMethod.GET)
-	    public ResponseEntity<?> refreshAndGetAuthenticationToken(
+	    public @ResponseBody ResponseEntity<?> refreshAndGetAuthenticationToken(
 	            HttpServletRequest request) throws AuthenticationException{
 	        String token = request.getHeader(tokenHeader);
 	        String refreshedToken = authService.refresh(token);
@@ -47,7 +48,7 @@ public class AuthController {
 	    }
 
 	    @RequestMapping(value = "${jwt.route.authentication.register}", method = RequestMethod.POST)
-	    public int register(@RequestBody User addedUser) throws AuthenticationException{
+	    public @ResponseBody User register(@RequestBody User addedUser) throws AuthenticationException{
 	        return authService.register(addedUser);
 	    }
 

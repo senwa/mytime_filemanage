@@ -2,6 +2,8 @@ package com.zhs.mytime.filemanage.service;
 
 import java.util.Date;
 
+import javax.annotation.Resource;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -13,6 +15,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.zhs.mytime.filemanage.comm.UniqueIdUtil;
 import com.zhs.mytime.filemanage.dao.UserMapper;
 import com.zhs.mytime.filemanage.model.User;
 import com.zhs.mytime.filemanage.security.JwtTokenUtil;
@@ -30,7 +33,7 @@ public class AuthService {
 
     @Value("${jwt.tokenHead}")
     private String tokenHead;
-
+    
     @Autowired
     public AuthService(
             AuthenticationManager authenticationManager,
@@ -43,16 +46,22 @@ public class AuthService {
         this.userRepository = userRepository;
     }
 
-    public int register(User userToAdd) {
+    public User register(User userToAdd) {
         final String username = userToAdd.getAccount();
         if(userRepository.getByAccountOrEmailOrPhoneOrUnionId(username)!=null) {
-            return 0;
+            return null;
         }
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         final String rawPassword = userToAdd.getPwd();
         userToAdd.setPwd(encoder.encode(rawPassword));
-        //userToAdd.setRoles(asList("ROLE_USER"));
-        return userRepository.insert(userToAdd);
+        userToAdd.setId(UniqueIdUtil.getGuidRan());
+        userToAdd.setLastPasswordResetDate(new Date());
+        userToAdd.setRegdate(new Date());
+        userToAdd.setRoles("ROLE_USER");
+        userToAdd.setRoleList(asList("ROLE_USER"));
+        userRepository.insert(userToAdd);
+        
+        return userToAdd;
     }
 
     public String login(String username, String password) {

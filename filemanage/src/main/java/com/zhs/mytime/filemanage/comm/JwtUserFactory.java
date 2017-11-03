@@ -25,16 +25,17 @@ public class JwtUserFactory {
                 user.getPhone(),
                 user.getLastPasswordResetDate(),
                 user.getState(),
-                mapToGrantedAuthorities(new ArrayList<String>())
+                mapToGrantedAuthorities(user.getRoles())
         );
     }
 
-    private static List<GrantedAuthority> mapToGrantedAuthorities(List<String> authorities) {
+    private static List<GrantedAuthority> mapToGrantedAuthorities(String roles) {
     	List<GrantedAuthority> res = null;
-    	if(authorities!=null&&!authorities.isEmpty()){
+    	if(StringUtils.isNotEmpty(roles)){
     		res = new ArrayList<GrantedAuthority>();
-    		for(int i=0; i<authorities.size(); i++){
-    			res.add(new SimpleGrantedAuthority(authorities.get(i)));
+    		String[] roleArray = roles.split(",");
+    		for(int i=0; i<roleArray.length; i++){
+    			res.add(new SimpleGrantedAuthority(roleArray[i]));
     		}
     	}
     	return res;

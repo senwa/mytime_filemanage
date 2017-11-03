@@ -2,6 +2,7 @@ package com.zhs.mytime.filemanage.service;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -12,7 +13,7 @@ import com.zhs.mytime.filemanage.model.User;
 @Service
 public class JwtUserDetailsServiceImpl implements UserDetailsService {
 
-	@Resource
+	@Autowired
 	private UserMapperService userMapperService;
 	
 	@Override

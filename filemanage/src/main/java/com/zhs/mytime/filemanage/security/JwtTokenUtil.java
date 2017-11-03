@@ -32,6 +32,7 @@ public class JwtTokenUtil implements Serializable {
             final Claims claims = getClaimsFromToken(token);
             username = claims.getSubject();
         } catch (Exception e) {
+        	e.printStackTrace();
             username = null;
         }
         return username;
@@ -44,6 +45,7 @@ public class JwtTokenUtil implements Serializable {
             created = new Date((Long) claims.get(CLAIM_KEY_CREATED));
         } catch (Exception e) {
             created = null;
+            e.printStackTrace();
         }
         return created;
     }
@@ -55,6 +57,7 @@ public class JwtTokenUtil implements Serializable {
             expiration = claims.getExpiration();
         } catch (Exception e) {
             expiration = null;
+            e.printStackTrace();
         }
         return expiration;
     }
@@ -63,17 +66,18 @@ public class JwtTokenUtil implements Serializable {
         Claims claims;
         try {
             claims = Jwts.parser()
-                    .setSigningKey(secret)
+                    .setSigningKey(secret.getBytes())
                     .parseClaimsJws(token)
                     .getBody();
         } catch (Exception e) {
             claims = null;
+            e.printStackTrace();
         }
         return claims;
     }
 
     private Date generateExpirationDate() {
-        return new Date(System.currentTimeMillis() + expiration * 1000);
+        return new Date(System.currentTimeMillis() + expiration * 1000);//7天过期
     }
 
     private Boolean isTokenExpired(String token) {
@@ -96,7 +100,7 @@ public class JwtTokenUtil implements Serializable {
         return Jwts.builder()
                 .setClaims(claims)
                 .setExpiration(generateExpirationDate())
-                .signWith(SignatureAlgorithm.HS512, secret)
+                .signWith(SignatureAlgorithm.HS512, secret.getBytes())
                 .compact();
     }
 
@@ -114,6 +118,7 @@ public class JwtTokenUtil implements Serializable {
             refreshedToken = generateToken(claims);
         } catch (Exception e) {
             refreshedToken = null;
+            e.printStackTrace();
         }
         return refreshedToken;
     }
