@@ -51,7 +51,7 @@ public class WeiXinUtil {
 	
 	
 	
-	public Map<String,String> getWXLoginInfo(String appId,String appSecret,String code){
+	public static Map<String,String> getWXLoginInfo(String appId,String appSecret,String code){
 		Object[] args={
 				appId,appSecret,code
 		};
