@@ -77,7 +77,7 @@ public class AuthController {
 	    	try{
 	    		if(StringUtils.isMobile(phone)){
 		    		String random = String.valueOf((new Random().nextInt(8999) + 1000));
-		    		res.setMessage(random);//直接发到客户端去验证
+		    		//res.setMessage(random);//直接发到客户端去验证
 		    		SMSUtil.sendMsgByTemplate(smsAppId, secrectKey, phone, random, templateId);
 		    		boolean redisRes = RedisUtil.setString(phone, 120, random);//保留2分钟
 		    		if(!redisRes){
