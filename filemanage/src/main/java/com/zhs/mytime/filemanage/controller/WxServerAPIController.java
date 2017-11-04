@@ -29,6 +29,8 @@ public class WxServerAPIController {
     @RequestMapping(value = "/onWxLogin", method = RequestMethod.GET)
     public @ResponseBody Map<String,String> onWxLogin(@RequestParam String code) throws AuthenticationException{
     	Map<String,String> res = WeiXinUtil.getWXLoginInfo(APPID, APPSECRECT, code);
+    	//把获取到的openid session_key unionid 存到redis中,用户当前tocken作为key.后期图片上传等业务把记录的这些信息作为条件区分
+    	
     	
     	return res;
     }
