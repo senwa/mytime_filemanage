@@ -1,6 +1,8 @@
 package com.zhs.mytime.filemanage.security;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -15,9 +17,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
-
-
-import io.jsonwebtoken.Claims;
+import com.zhs.mytime.filemanage.comm.RedisUtil;
 
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
@@ -47,7 +47,6 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 	        	 if (account != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 	
 	                UserDetails userDetails = this.userDetailsService.loadUserByUsername(account);
-	
 	                if (jwtTokenUtil.validateToken(authToken, userDetails)) {
 	                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
 	                            userDetails, null, userDetails.getAuthorities());
@@ -55,6 +54,18 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 	                            request));
 	                    logger.info("authenticated user " + account + ", setting security context");
 	                    SecurityContextHolder.getContext().setAuthentication(authentication);
+	                    //把信息存入redis中
+	                    JwtUser jwtUser = (JwtUser) userDetails;
+	                    Map<String,String> user = new HashMap<String,String>();
+	                    user.put("id", jwtUser.getId());
+	                    user.put("account", jwtUser.getUsername());
+	                    user.put("fullName", jwtUser.getFullName());
+	                    user.put("unionId", jwtUser.getUnionId());
+	                    //map存入redis
+	                    RedisUtil.addMap(authToken, RedisUtil.EXRP_DAY,user);
+	                    
+	                }else{
+	                	//需要重新登录
 	                }
 	            }
 	        }

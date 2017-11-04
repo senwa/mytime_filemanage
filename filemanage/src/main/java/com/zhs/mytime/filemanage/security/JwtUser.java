@@ -55,6 +55,16 @@ public class JwtUser implements UserDetails {
     }
 	
 	@JsonIgnore
+    public String getUnionId() {
+        return this.unionId;
+    }
+	
+	 public String getFullName() {
+	        return this.fullName;
+	 }
+	
+	
+	@JsonIgnore
 	@Override
 	public String getPassword() {
 		
