@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import com.zhs.mytime.filemanage.comm.FileUtil;
+import com.zhs.mytime.filemanage.comm.RedisUtil;
 import com.zhs.mytime.filemanage.comm.ResultMessage;
 import com.zhs.mytime.filemanage.comm.StringUtils;
 import com.zhs.mytime.filemanage.comm.UniqueIdUtil;
@@ -40,6 +41,13 @@ public class FileUploadController {
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());  
 	@Value("${fileuploadFolder}")
 	private String fileuploadFolder;
+	
+    @Value("${jwt.header}")
+    private String tokenHeader;
+
+    @Value("${jwt.tokenHead}")
+    private String tokenHead;
+	
 	//跳转到上传文件的页面
     @RequestMapping(value="/uploadPage", method = RequestMethod.GET)
     public String goUploadImg() {
@@ -51,6 +59,16 @@ public class FileUploadController {
     @RequestMapping(value="/upload", method = RequestMethod.POST)
     public @ResponseBody ResultMessage uploadImg(@RequestParam("file") MultipartFile file,
             HttpServletRequest request) {
+    		String account = null,fullName=null;
+    		//通过header中的token,避免再次解析token花费时间,直接到redis中拿到过滤器中存放的账号信息
+			String authHeader = request.getHeader(this.tokenHeader);
+	        if (authHeader != null && authHeader.startsWith(tokenHead)) {
+	             final String authToken = authHeader.substring(tokenHead.length());
+	             account = RedisUtil.getMapValue(authToken, "account");
+	             fullName = RedisUtil.getMapValue(authToken, "fullName");
+	        }
+    	
+    	
     	ResultMessage res = new ResultMessage(ResultMessage.SUCCESS, "上传成功");
     	String filePath = null;
     	String fileName = "";
@@ -58,20 +76,17 @@ public class FileUploadController {
     	try{
     		
     		fileName = file.getOriginalFilename();
-    		String unionId = request.getParameter("unionId");
-    		String wxaccount = request.getParameter("wxaccount");//微信账号名
-    		if(StringUtils.isEmpty(unionId)){
-    			logger.warn("unionId为空上传资源:"+fileName);
-    			unionId = "unknown";
+    		if(StringUtils.isEmpty(account)){
+    			account = request.getParameter("account");//账号名
     		}
     		
-    		logger.info("unionId",unionId);
+    		logger.info("account",account);
     		
     		String contentType = file.getContentType();
     		logger.info("contentType",contentType);
     		Calendar cal = Calendar.getInstance();
     		//路径定义规则(便于存储备份用这种格式):../人的微信号unionIds/年份s/月份s/
-	        filePath = fileuploadFolder+unionId+File.separator+cal.get(Calendar.YEAR)+File.separator+(cal.get(Calendar.MONTH)+1)+File.separator;
+	        filePath = fileuploadFolder+account+File.separator+cal.get(Calendar.YEAR)+File.separator+(cal.get(Calendar.MONTH)+1)+File.separator;
 	        fileName = System.currentTimeMillis()+fileName;
 	        
 	        FileUtil.uploadFile(file.getBytes(), filePath, fileName);
@@ -80,13 +95,13 @@ public class FileUploadController {
 	        ResourceMetadata record = new ResourceMetadata();
 	        record.setId(UniqueIdUtil.getGuidRan());
 	        record.setClientinfo(request.getParameter("clientinfo"));//客户端信息(网页端待测试)
-	        record.setFilepath(filePath);
+	        record.setFilepath(filePath+File.separator+fileName);
 	        record.setFilesize(Double.valueOf(file.getSize()));
 	        record.setFiletype(ResourceMetadata.getFileType(fileName));
 	        String locationMsg = request.getParameter("locationMsg");
         	record.setLocationMsg(locationMsg);
-        	record.setRegcode(unionId);
-        	record.setRegname(wxaccount);
+        	record.setRegcode(account);
+        	record.setRegname(fullName);
         	record.setRegdate(new Date());
 	        
         	String latStr = request.getParameter("lat");
@@ -146,7 +161,7 @@ public class FileUploadController {
 	        	record.setLongitude(lngStr);
 	        	if(StringUtils.isNotEmpty(duration)&&StringUtils.isNumberic(duration)){
 	        		try{
-	        			record.setVideoaudioDuration(Integer.valueOf(duration));
+	        			record.setVideoaudioDuration(Integer.valueOf(String.valueOf(Double.valueOf(duration)*1000)));
 	        		}catch(NumberFormatException fe){
 	        			logger.error(duration+"转为整型失败!");
 	        		}
@@ -157,8 +172,9 @@ public class FileUploadController {
 	        	record.setLongitude(lngStr);
 	        	if(StringUtils.isNotEmpty(duration)&&StringUtils.isNumberic(duration)){
 	        		try{
-	        			record.setVideoaudioDuration(Integer.valueOf(duration));
+	        			record.setVideoaudioDuration(Integer.valueOf(String.valueOf(Double.valueOf(duration)*1000)));
 	        		}catch(NumberFormatException fe){
+	        			fe.printStackTrace();
 	        			logger.error(duration+"转为整型失败!");
 	        		}
 	        	}

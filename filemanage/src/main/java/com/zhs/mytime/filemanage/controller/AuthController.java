@@ -46,12 +46,22 @@ public class AuthController {
 	    private AuthService authService;
 
 	    @RequestMapping(value = "${jwt.route.authentication.path}", method = RequestMethod.POST)
-	    public @ResponseBody ResponseEntity<?> createAuthenticationToken(
+	    public @ResponseBody ResultMessage createAuthenticationToken(
 	            @RequestBody JwtAuthenticationRequest authenticationRequest) throws AuthenticationException{
-	        final String token = authService.login(authenticationRequest.getAccount(), authenticationRequest.getPwd());
-
-	        // Return the token
-	        return ResponseEntity.ok(new JwtAuthenticationResponse(token));
+	    	ResultMessage res = new ResultMessage(ResultMessage.SUCCESS, "登录成功");
+	    	String token=null;
+	    	try{
+	    		  token = authService.login(authenticationRequest.getAccount(), authenticationRequest.getPwd());
+	    		  res.setExtData(token);
+	    		  res.setMessage("登录成功!");
+	    	}catch(Exception e){//授权失败,账号密码错误等信息
+	    		e.printStackTrace();
+	    		logger.error(e.getMessage());
+	    		res.setResult(ResultMessage.FAIL);
+	    		res.setMessage("登录失败!");
+	    		res.setCause(e.getMessage());
+	    	}
+	        return res;//返回带上token
 	    }
 
 	    @RequestMapping(value = "${jwt.route.authentication.refresh}", method = RequestMethod.GET)
@@ -67,8 +77,19 @@ public class AuthController {
 	    }
 
 	    @RequestMapping(value = "${jwt.route.authentication.register}", method = RequestMethod.POST)
-	    public @ResponseBody User register(@RequestBody User addedUser) throws AuthenticationException{
-	        return authService.register(addedUser);
+	    public @ResponseBody ResultMessage register(@RequestBody User addedUser) throws AuthenticationException{
+	    	ResultMessage res = new ResultMessage(ResultMessage.SUCCESS, "注册成功");
+	    	User user = authService.register(addedUser);
+	    	String token = authService.login(addedUser.getAccount(),addedUser.getPwd());
+	    	if(user!=null){
+	    		 res.setMessage(token);//直接返回token存到客户端
+	    		 res.setExtData(user);
+	    		 return res;
+	    	}else{
+	    		res.setResult(ResultMessage.FAIL);
+	    		res.setMessage("用户名已存在,请换个用户名或直接使用手机号");
+	    		return res;
+	    	}
 	    }
 	    
 	    @RequestMapping(value = "${jwt.route.authentication.sms}")
@@ -89,7 +110,7 @@ public class AuthController {
 	    	}catch(Exception e){
 	    		e.printStackTrace();
 	    		res.setResult(ResultMessage.FAIL);
-	    		res.setMessage("发送失败");
+	    		res.setMessage("发送失败:"+e.getMessage());
 	    	}
 			return res;
 	    }

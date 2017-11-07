@@ -11,6 +11,7 @@ import java.io.FileFilter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -30,6 +31,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -1121,5 +1124,33 @@ public class FileUtil {
     public static boolean isSubFile(String parent, String child) throws IOException {  
         return isSubFile(new File(parent), new File(child));  
     }  
+    
+    public static void main(String[] arges){
+    	
+    	File f = new File("F:\\Users\\sen\\Documents\\GitHub\\mytime_filemanage\\filemanage\\src\\main\\java\\com\\zhs\\mytime\\filemanage\\comm\\t.txt");
+    	try {
+    		BufferedReader  fr = new BufferedReader (new FileReader(f));
+    		String line=null;
+			StringBuffer sb = null;
+			while((line = fr.readLine())!=null){
+				String[] groups = line.split("\\s+");
+				//System.out.println(groups.length);
+				sb = new StringBuffer();
+				//System.out.println(line = fr.readLine());
+				//System.out.println(line);
+				//SMSResult(1001,"sig校验失败","请核对API的sig格式说明")
+				sb.append("resDic.put(");
+				sb.append(groups[0].trim());
+				//System.out.println(line);
+				sb.append(",\""+groups[1].trim()+"\");");
+				
+				System.out.println(sb.toString());
+			}
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    	
+    }
 }
 

@@ -2,7 +2,6 @@ package com.zhs.mytime.filemanage.comm;
 
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.text.MessageFormat;
 import java.util.ArrayList;

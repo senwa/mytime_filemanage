@@ -72,10 +72,7 @@ public class AuthService {
 
         // Reload password post-security so we can generate token
         final UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-        final String token = jwtTokenUtil.generateToken(userDetails);
-        
-        //登录成功,把信息记录到redis中
-        
+        final String token = jwtTokenUtil.generateToken(userDetails);        
         return token;
     }
 

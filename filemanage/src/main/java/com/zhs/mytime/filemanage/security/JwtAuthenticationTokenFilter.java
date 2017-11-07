@@ -60,9 +60,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 	                    user.put("id", jwtUser.getId());
 	                    user.put("account", jwtUser.getUsername());
 	                    user.put("fullName", jwtUser.getFullName());
-	                    user.put("unionId", jwtUser.getUnionId());
 	                    //map存入redis
-	                    RedisUtil.addMap(authToken, RedisUtil.EXRP_DAY,user);
+	                    RedisUtil.addMap(authToken, RedisUtil.EXRP_DAY,user);//后期访问直接从redis中取
 	                    
 	                }else{
 	                	//需要重新登录

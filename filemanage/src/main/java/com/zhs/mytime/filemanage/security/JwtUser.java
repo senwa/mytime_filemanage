@@ -49,12 +49,10 @@ public class JwtUser implements UserDetails {
 		return this.authorities;
 	}
 	
-	@JsonIgnore
     public String getId() {
         return id;
     }
 	
-	@JsonIgnore
     public String getUnionId() {
         return this.unionId;
     }
@@ -63,43 +61,35 @@ public class JwtUser implements UserDetails {
 	        return this.fullName;
 	 }
 	
-	
-	@JsonIgnore
 	@Override
 	public String getPassword() {
 		
 		return this.pwd;
 	}
-	@JsonIgnore
 	@Override
 	public String getUsername() {
 		return this.account;
 	}
-	@JsonIgnore
 	@Override
 	public boolean isAccountNonExpired() {
 		return true;
 	}
-	@JsonIgnore
 	@Override
 	public boolean isAccountNonLocked() {
 
 		return true;
 	}
-	@JsonIgnore
 	@Override
 	public boolean isCredentialsNonExpired() {
 	
 		return true;
 	}
-	@JsonIgnore
 	@Override
 	public boolean isEnabled() {
 
 		return true;
 	}
 	
-	 @JsonIgnore
 	public Date getLastPasswordResetDate() {
 	        return lastPasswordReset;
 	}

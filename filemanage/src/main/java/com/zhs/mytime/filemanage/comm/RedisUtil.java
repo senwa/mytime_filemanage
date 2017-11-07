@@ -1,6 +1,7 @@
 package com.zhs.mytime.filemanage.comm;
 
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +13,7 @@ import redis.clients.jedis.JedisPoolConfig;
 public final class RedisUtil {
 	private static Logger logger = LoggerFactory.getLogger(RedisUtil.class);
     //Redis服务器IP
-    private final static String ADDR = "127.0.0.1";
+    private final static String ADDR = "127.0.0.1";//"";//"";
     
     //Redis的端口号
     private final static int PORT = 6379;
@@ -55,12 +56,18 @@ public final class RedisUtil {
             config.setMaxTotal(MAX_ACTIVE);
             config.setMaxIdle(MAX_IDLE);
             config.setTestOnBorrow(TEST_ON_BORROW);
-            jedisPool = new JedisPool(config, ADDR, PORT, TIMEOUT);
+            jedisPool = new JedisPool(config, ADDR, PORT, TIMEOUT,AUTH);
         } catch (Exception e) {
             e.printStackTrace();
             logger.error("First create JedisPool error : "+e);
         }
     }
+    
+    public static void main(String[] arges){
+    	
+    	setString("zhs","asd");
+    }
+    
     /**
      * 同步获取Jedis实例
      * @return Jedis
@@ -209,6 +216,13 @@ public final class RedisUtil {
     	Jedis jedis = null;
     	try {
     		if(map!=null){
+    			 if(!map.entrySet().isEmpty()){
+    				 for(Entry<String, String> entity : map.entrySet()){
+    					 if(entity.getValue()==null){
+    						 entity.setValue("");
+    					 }
+    				 }
+    			 }
     			 jedis =  getJedis();
     			 jedis.hmset(key, map);
     			 jedis.expire(key, seconds);
