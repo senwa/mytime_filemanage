@@ -7,7 +7,7 @@ CREATE TABLE `resource_meta_data` (
   `filesize` double(10,2) DEFAULT NULL COMMENT '文件大小',
   `videoaudio_posterpath` varchar(400) DEFAULT NULL COMMENT '如果是视频或者音频,那么存封面地址或者动图地址',
   `filetype` tinyint(2) DEFAULT NULL COMMENT '文件类型标识:视频,图片,音频',
-  `videoaudio_duration` int(10) DEFAULT NULL COMMENT '视频或者音频时长',
+  `videoaudio_duration` double(14,3) DEFAULT NULL COMMENT '视频或者音频时长',
   `width` double(8,2) DEFAULT NULL,
   `height` double(8,0) DEFAULT NULL,
   `clientinfo` text,
