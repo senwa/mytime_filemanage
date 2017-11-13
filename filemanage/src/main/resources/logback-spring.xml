@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration debug="true" scan="true" scanPeriod="30 seconds">
+<configuration debug="false" scan="false" scanPeriod="180 seconds">
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <contextName>logback</contextName>
     <logger name="org.springframework.web" level="info"/>

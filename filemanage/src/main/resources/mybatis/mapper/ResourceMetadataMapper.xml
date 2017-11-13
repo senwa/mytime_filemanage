@@ -10,7 +10,7 @@
     <result column="filesize" jdbcType="DOUBLE" property="filesize" />
     <result column="videoaudio_posterpath" jdbcType="VARCHAR" property="videoaudioPosterpath" />
     <result column="filetype" jdbcType="TINYINT" property="filetype" />
-    <result column="videoaudio_duration" jdbcType="INTEGER" property="videoaudioDuration" />
+    <result column="videoaudio_duration" jdbcType="Double" property="videoaudioDuration" />
     <result column="width" jdbcType="DOUBLE" property="width" />
     <result column="height" jdbcType="DOUBLE" property="height" />
     <result column="longitude" jdbcType="VARCHAR" property="longitude" />
@@ -48,7 +48,7 @@
       )
     values (#{id,jdbcType=VARCHAR}, #{regdate,jdbcType=TIMESTAMP}, #{regname,jdbcType=VARCHAR}, 
       #{regcode,jdbcType=VARCHAR}, #{filepath,jdbcType=VARCHAR}, #{filesize,jdbcType=DOUBLE}, 
-      #{videoaudioPosterpath,jdbcType=VARCHAR}, #{filetype,jdbcType=TINYINT}, #{videoaudioDuration,jdbcType=INTEGER}, 
+      #{videoaudioPosterpath,jdbcType=VARCHAR}, #{filetype,jdbcType=TINYINT}, #{videoaudioDuration,jdbcType=Double}, 
       #{width,jdbcType=DOUBLE}, #{height,jdbcType=DOUBLE}, #{longitude,jdbcType=VARCHAR}, 
       #{latitude,jdbcType=VARCHAR}, #{locationMsg,jdbcType=VARCHAR}, #{clientinfo,jdbcType=LONGVARCHAR}
       )
@@ -128,7 +128,7 @@
         #{filetype,jdbcType=TINYINT},
       </if>
       <if test="videoaudioDuration != null">
-        #{videoaudioDuration,jdbcType=INTEGER},
+        #{videoaudioDuration,jdbcType=Double},
       </if>
       <if test="width != null">
         #{width,jdbcType=DOUBLE},
@@ -175,7 +175,7 @@
         filetype = #{filetype,jdbcType=TINYINT},
       </if>
       <if test="videoaudioDuration != null">
-        videoaudio_duration = #{videoaudioDuration,jdbcType=INTEGER},
+        videoaudio_duration = #{videoaudioDuration,jdbcType=Double},
       </if>
       <if test="width != null">
         width = #{width,jdbcType=DOUBLE},
@@ -207,7 +207,7 @@
       filesize = #{filesize,jdbcType=DOUBLE},
       videoaudio_posterpath = #{videoaudioPosterpath,jdbcType=VARCHAR},
       filetype = #{filetype,jdbcType=TINYINT},
-      videoaudio_duration = #{videoaudioDuration,jdbcType=INTEGER},
+      videoaudio_duration = #{videoaudioDuration,jdbcType=Double},
       width = #{width,jdbcType=DOUBLE},
       height = #{height,jdbcType=DOUBLE},
       longitude = #{longitude,jdbcType=VARCHAR},
@@ -225,7 +225,7 @@
       filesize = #{filesize,jdbcType=DOUBLE},
       videoaudio_posterpath = #{videoaudioPosterpath,jdbcType=VARCHAR},
       filetype = #{filetype,jdbcType=TINYINT},
-      videoaudio_duration = #{videoaudioDuration,jdbcType=INTEGER},
+      videoaudio_duration = #{videoaudioDuration,jdbcType=Double},
       width = #{width,jdbcType=DOUBLE},
       height = #{height,jdbcType=DOUBLE},
       longitude = #{longitude,jdbcType=VARCHAR},

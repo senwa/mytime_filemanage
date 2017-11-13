@@ -21,7 +21,7 @@ public class ResourceMetadata {
 
     private Byte filetype;
 
-    private Integer videoaudioDuration;
+    private Double videoaudioDuration;
 
     private Double width;
 
@@ -99,11 +99,11 @@ public class ResourceMetadata {
         this.filetype = filetype;
     }
 
-    public Integer getVideoaudioDuration() {
+    public Double getVideoaudioDuration() {
         return videoaudioDuration;
     }
 
-    public void setVideoaudioDuration(Integer videoaudioDuration) {
+    public void setVideoaudioDuration(Double videoaudioDuration) {
         this.videoaudioDuration = videoaudioDuration;
     }
 
