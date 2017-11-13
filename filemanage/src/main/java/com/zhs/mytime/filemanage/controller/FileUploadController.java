@@ -161,9 +161,9 @@ public class FileUploadController {
 	        	record.setLongitude(lngStr);
 	        	if(StringUtils.isNotEmpty(duration)&&StringUtils.isNumberic(duration)){
 	        		try{
-	        			record.setVideoaudioDuration(Integer.valueOf(String.valueOf(Double.valueOf(duration)*1000)));
+	        			record.setVideoaudioDuration(Double.valueOf(duration)*1000);
 	        		}catch(NumberFormatException fe){
-	        			logger.error(duration+"转为整型失败!");
+	        			logger.error(duration+"转为Double型失败!");
 	        		}
 	        	}
 	        	
@@ -172,10 +172,10 @@ public class FileUploadController {
 	        	record.setLongitude(lngStr);
 	        	if(StringUtils.isNotEmpty(duration)&&StringUtils.isNumberic(duration)){
 	        		try{
-	        			record.setVideoaudioDuration(Integer.valueOf(String.valueOf(Double.valueOf(duration)*1000)));
+	        			record.setVideoaudioDuration(Double.valueOf(duration)*1000);
 	        		}catch(NumberFormatException fe){
 	        			fe.printStackTrace();
-	        			logger.error(duration+"转为整型失败!");
+	        			logger.error(duration+"转为Double型失败!");
 	        		}
 	        	}
 	        	
