@@ -114,6 +114,11 @@
 		  	<artifactId>sms</artifactId>
 		  	<version>0.9.1</version>
 		</dependency>
+		<dependency>
+		    <groupId>com.github.tobato</groupId>
+		    <artifactId>fastdfs-client</artifactId>
+		    <version>1.25.1-RELEASE</version>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>

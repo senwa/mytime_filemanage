@@ -1,5 +1,8 @@
 package com.zhs.mytime.filemanage.service;
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +34,12 @@ public class ResourceMetadataMapperService {
 	public ResourceMetadata selectByPrimaryKey(String id){
 		return dao.selectByPrimaryKey(id);
 	}
-
+	
+	public List<ResourceMetadata> getListByParam(Map<String,Object> param){
+		return dao.getListByParam(param);
+	}
+	
+	
 	@Transactional
 	public int updateByPrimaryKeySelective(ResourceMetadata record){
 		return dao.updateByPrimaryKeySelective(record);

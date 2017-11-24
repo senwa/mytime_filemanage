@@ -16,6 +16,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -24,6 +25,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.zhs.mytime.filemanage.comm.FastDFSClientWrapper;
 import com.zhs.mytime.filemanage.comm.FileUtil;
 import com.zhs.mytime.filemanage.comm.RedisUtil;
 import com.zhs.mytime.filemanage.comm.ResultMessage;
@@ -37,6 +40,9 @@ import com.zhs.mytime.filemanage.service.ResourceMetadataMapperService;
 public class FileUploadController {
 	@Resource
 	private ResourceMetadataMapperService resMetadataService;
+	@Autowired
+	private FastDFSClientWrapper fastDFSClientWrapper;
+	
 	
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());  
 	@Value("${fileuploadFolder}")
@@ -55,19 +61,32 @@ public class FileUploadController {
         return "uploadimg";
     }
     
+    private Map<String,String> getAcoountAndFullName(HttpServletRequest request){
+    	String account = null;
+    	String fullName = null;
+    	//通过header中的token,避免再次解析token花费时间,直接到redis中拿到过滤器中存放的账号信息
+    	String authHeader = request.getHeader(this.tokenHeader);
+        if (authHeader != null && authHeader.startsWith(tokenHead)) {
+             final String authToken = authHeader.substring(tokenHead.length());
+             account = RedisUtil.getMapValue(authToken, "account");
+             fullName = RedisUtil.getMapValue(authToken, "fullName");
+        }
+        
+        Map<String,String> res = new HashMap<String,String>();
+        res.put("account", account);
+        res.put("fullName", fullName);
+        return res;
+    }
+    
   //处理文件上传
     @RequestMapping(value="/upload", method = RequestMethod.POST)
     public @ResponseBody ResultMessage uploadImg(@RequestParam("file") MultipartFile file,
             HttpServletRequest request) {
-    		String account = null,fullName=null;
-    		//通过header中的token,避免再次解析token花费时间,直接到redis中拿到过滤器中存放的账号信息
-			String authHeader = request.getHeader(this.tokenHeader);
-	        if (authHeader != null && authHeader.startsWith(tokenHead)) {
-	             final String authToken = authHeader.substring(tokenHead.length());
-	             account = RedisUtil.getMapValue(authToken, "account");
-	             fullName = RedisUtil.getMapValue(authToken, "fullName");
-	        }
     	
+    	String account = null,fullName=null;
+    	Map<String,String> userInfo = getAcoountAndFullName(request);
+    	account = userInfo.get("account");
+    	fullName = userInfo.get("fullName");
     	
     	ResultMessage res = new ResultMessage(ResultMessage.SUCCESS, "上传成功");
     	String filePath = null;
@@ -89,13 +108,15 @@ public class FileUploadController {
 	        filePath = fileuploadFolder+account+File.separator+cal.get(Calendar.YEAR)+File.separator+(cal.get(Calendar.MONTH)+1)+File.separator;
 	        fileName = System.currentTimeMillis()+fileName;
 	        
-	        FileUtil.uploadFile(file.getBytes(), filePath, fileName);
+	        //FileUtil.uploadFile(file.getBytes(), filePath, fileName);
+	        //上传到fastdfs服务器
+	        String fsdfsFullPath = fastDFSClientWrapper.uploadFile(file);//返回带group的fastdfs上的文件存储路径
 	        
 	        //写数据库
 	        ResourceMetadata record = new ResourceMetadata();
 	        record.setId(UniqueIdUtil.getGuidRan());
 	        record.setClientinfo(request.getParameter("clientinfo"));//客户端信息(网页端待测试)
-	        record.setFilepath(filePath+File.separator+fileName);
+	        record.setFilepath(fsdfsFullPath);
 	        record.setFilesize(Double.valueOf(file.getSize()));
 	        record.setFiletype(ResourceMetadata.getFileType(fileName));
 	        String locationMsg = request.getParameter("locationMsg");
@@ -220,8 +241,8 @@ public class FileUploadController {
     }
     
     //获取文件列表
-    @RequestMapping(value="/getFileNames", method = RequestMethod.GET)
-    public @ResponseBody ResultMessage getFileNames(HttpServletRequest request) {
+    @RequestMapping(value="/getFileNames_bak", method = RequestMethod.GET)
+    public @ResponseBody ResultMessage getFileNames_bak(HttpServletRequest request) {
     	ResultMessage res = new ResultMessage(ResultMessage.SUCCESS);
 	    try{
 	    	ArrayList<File> files = FileUtil.getFileOnly(new File(fileuploadFolder));
@@ -256,6 +277,39 @@ public class FileUploadController {
         return res;
     }
     
+    //获取文件列表
+    @RequestMapping(value="/getFileNames", method = RequestMethod.GET)
+    public @ResponseBody ResultMessage getFileNames(HttpServletRequest request) {
+    	ResultMessage res = new ResultMessage(ResultMessage.SUCCESS);
+	    try{
+	    	List<HashMap<String, String>> filenames = new ArrayList<HashMap<String,String>>();
+	    	HashMap<String,String>  dic = new HashMap<String,String>();
+			/*dic.put("fileName", temp.getName());
+			dic.put("fileSize", FileUtil.getFileSize(temp));
+			dic.put("fileType", FileUtil.getFileExt(temp));*/
+			//filenames.add(dic);
+			//解析出用户信息
+			String account = null,fullName=null;
+	    	Map<String,String> userInfo = getAcoountAndFullName(request);
+	    	account = userInfo.get("account");
+	    	fullName = userInfo.get("fullName");
+	    	
+	    	Map<String,Object> queryParam = new HashMap<String,Object>();
+	    	
+	    	queryParam.put("regcode", account);
+	    	
+			List<ResourceMetadata> resList = resMetadataService.getListByParam(queryParam);
+	    	res.setExtData(resList);
+	    }catch(Exception e){
+	    	e.printStackTrace();
+	    	res.setResult(ResultMessage.FAIL);
+	    	res.setCause(e.getMessage());
+	    	res.setMessage("获取失败");
+	    }
+    	
+        //返回json
+        return res;
+    }
     
     //处理文件下载
     @RequestMapping(value="/download")

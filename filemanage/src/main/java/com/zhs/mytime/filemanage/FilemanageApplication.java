@@ -4,7 +4,12 @@ import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import com.github.tobato.fastdfs.FdfsClientConfig;
+
+@Import(FdfsClientConfig.class)
 @SpringBootApplication
 @EnableTransactionManagement 
 @MapperScan("com.zhs.mytime.filemanage.dao")

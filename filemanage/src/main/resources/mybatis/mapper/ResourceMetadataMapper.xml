@@ -35,6 +35,15 @@
     from resource_meta_data
     where id = #{id,jdbcType=VARCHAR}
   </select>
+  <!--获取资源列表-->
+   <select id="getListByParam" parameterType="java.util.Map" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    from resource_meta_data 
+    where regcode=#{regcode}
+    order by regdate desc ,longitude,latitude 
+  </select>
+  
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
     delete from resource_meta_data
     where id = #{id,jdbcType=VARCHAR}
