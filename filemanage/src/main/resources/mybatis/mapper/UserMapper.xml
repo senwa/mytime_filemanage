@@ -36,6 +36,7 @@
     <include refid="Base_Column_List" />
     from user
     where account = #{account,jdbcType=VARCHAR} or email = #{email,jdbcType=VARCHAR} or phone = #{phone,jdbcType=VARCHAR}  or union_id = #{unionId,jdbcType=VARCHAR} 
+  	limit 1 
   </select>
   
   <delete id="deleteByPrimaryKey" parameterType="java.lang.String">

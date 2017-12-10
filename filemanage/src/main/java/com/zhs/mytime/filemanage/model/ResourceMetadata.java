@@ -10,6 +10,8 @@ public class ResourceMetadata {
     private Date regdate;
 
     private String regname;
+    
+    private String filename;
 
     private String regcode;
 
@@ -35,7 +37,15 @@ public class ResourceMetadata {
 
     private String clientinfo;
 
-    public String getId() {
+    public String getFilename() {
+		return filename;
+	}
+
+	public void setFilename(String filename) {
+		this.filename = filename;
+	}
+
+	public String getId() {
         return id;
     }
 

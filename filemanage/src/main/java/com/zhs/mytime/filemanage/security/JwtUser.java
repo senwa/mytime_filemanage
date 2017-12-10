@@ -6,8 +6,6 @@ import java.util.Date;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import net.minidev.json.annotate.JsonIgnore;
-
 public class JwtUser implements UserDetails {
 
 	private final String id;

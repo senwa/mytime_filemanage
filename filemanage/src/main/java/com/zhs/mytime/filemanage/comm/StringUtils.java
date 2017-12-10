@@ -240,6 +240,9 @@ public class StringUtils {
 		 * @return
 		 */
 		public static boolean validByRegex(String regex, String input) {
+			if(StringUtils.isEmpty(input)){
+				return false;
+			}
 			Pattern p = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 			Matcher regexMatcher = p.matcher(input);
 			return regexMatcher.find();

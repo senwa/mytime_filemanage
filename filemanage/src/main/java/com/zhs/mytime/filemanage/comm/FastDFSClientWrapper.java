@@ -31,6 +31,16 @@ public class FastDFSClientWrapper {
 	        StorePath storePath = storageClient.uploadFile(file.getInputStream(),file.getSize(), FilenameUtils.getExtension(file.getOriginalFilename()),null);
 	        return storePath.getFullPath();//getResAccessUrl(storePath);
 	    }
+	    /**
+	     * 上传文件
+	     * @param file 文件对象
+	     * @return 文件访问地址
+	     * @throws IOException
+	     */
+	    public String uploadFileWithGenThumb(MultipartFile file) throws IOException {
+	        StorePath storePath = storageClient.uploadImageAndCrtThumbImage(file.getInputStream(),file.getSize(), FilenameUtils.getExtension(file.getOriginalFilename()),null);
+	        return storePath.getFullPath();//getResAccessUrl(storePath);
+	    }
 
 	    /**
 	     * 将一段字符串生成一个文件上传

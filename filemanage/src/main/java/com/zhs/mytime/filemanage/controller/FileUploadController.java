@@ -90,6 +90,7 @@ public class FileUploadController {
     	
     	ResultMessage res = new ResultMessage(ResultMessage.SUCCESS, "上传成功");
     	String filePath = null;
+    	String fsdfsFullPath = null;
     	String fileName = "";
     	String wrongFileDir = fileuploadFolder+File.separator+"wrong"+File.separator;
     	try{
@@ -103,18 +104,19 @@ public class FileUploadController {
     		
     		String contentType = file.getContentType();
     		logger.info("contentType",contentType);
-    		Calendar cal = Calendar.getInstance();
+    		//Calendar cal = Calendar.getInstance();
     		//路径定义规则(便于存储备份用这种格式):../人的微信号unionIds/年份s/月份s/
-	        filePath = fileuploadFolder+account+File.separator+cal.get(Calendar.YEAR)+File.separator+(cal.get(Calendar.MONTH)+1)+File.separator;
-	        fileName = System.currentTimeMillis()+fileName;
+	       /* filePath = fileuploadFolder+account+File.separator+cal.get(Calendar.YEAR)+File.separator+(cal.get(Calendar.MONTH)+1)+File.separator;
+	        fileName = System.currentTimeMillis()+fileName;*/
 	        
 	        //FileUtil.uploadFile(file.getBytes(), filePath, fileName);
-	        //上传到fastdfs服务器
-	        String fsdfsFullPath = fastDFSClientWrapper.uploadFile(file);//返回带group的fastdfs上的文件存储路径
+	        //上传到fastdfs服务器 并生成缩略图
+    		fsdfsFullPath = fastDFSClientWrapper.uploadFileWithGenThumb(file);//返回带group的fastdfs上的文件存储路径
 	        
 	        //写数据库
 	        ResourceMetadata record = new ResourceMetadata();
 	        record.setId(UniqueIdUtil.getGuidRan());
+	        record.setFilename(fileName);
 	        record.setClientinfo(request.getParameter("clientinfo"));//客户端信息(网页端待测试)
 	        record.setFilepath(fsdfsFullPath);
 	        record.setFilesize(Double.valueOf(file.getSize()));
@@ -133,7 +135,11 @@ public class FileUploadController {
         	
 	        if(record.getFiletype().byteValue()==ResourceMetadata.PIC){
 	        	//如果传入的参数中存在信息,优先使用传进来的参数信息
-	        	Map<String,String> imageInfo = FileUtil.getImageInfo(file.getInputStream());
+	        	Map<String,String> imageInfo = null;
+	        	String fileExt = FileUtil.getFileExt(fileName);
+	        	if("JPG".equalsIgnoreCase(fileExt)||"JPEG".equalsIgnoreCase(fileExt)){
+	        		imageInfo = FileUtil.getImageInfo(file.getInputStream());
+	        	}
 	        	
 	        	
 	        	if(StringUtils.isNotEmpty(heightStr)&&StringUtils.isNumberic(heightStr)){
@@ -211,29 +217,12 @@ public class FileUploadController {
 	        
 	        resMetadataService.insert(record);
 	        
-    	}catch(FileNotFoundException e){
-    		e.printStackTrace();
-    		logger.error(e.getMessage());
-    		res.setResult(ResultMessage.FAIL);
-    		res.setCause(e.getMessage());
-    		res.setMessage("上传失败,创建文件失败");
-    	}catch(IOException e){
-    		e.printStackTrace();
-    		logger.error(e.getMessage());
-    		res.setResult(ResultMessage.FAIL);
-    		res.setCause(e.getMessage());
-    		res.setMessage("上传失败,写入文件失败");
     	}catch(Exception e){
     		e.printStackTrace();
-    		logger.error(fileName+e.getMessage());
+    		logger.error(fsdfsFullPath+" "+fileName+e.getMessage());
     		res.setResult(ResultMessage.FAIL);
     		res.setCause(e.getMessage());
     		res.setMessage("上传失败");
-    		
-    		if(StringUtils.isNotEmpty(filePath+fileName)){
-    			//移动文件
-        		FileUtil.moveFile(filePath+fileName, wrongFileDir+fileName);
-    		}
     	}
         
         //返回json
@@ -282,12 +271,12 @@ public class FileUploadController {
     public @ResponseBody ResultMessage getFileNames(HttpServletRequest request) {
     	ResultMessage res = new ResultMessage(ResultMessage.SUCCESS);
 	    try{
-	    	List<HashMap<String, String>> filenames = new ArrayList<HashMap<String,String>>();
+	    /*	List<HashMap<String, String>> filenames = new ArrayList<HashMap<String,String>>();
 	    	HashMap<String,String>  dic = new HashMap<String,String>();
-			/*dic.put("fileName", temp.getName());
+			dic.put("fileName", temp.getName());
 			dic.put("fileSize", FileUtil.getFileSize(temp));
-			dic.put("fileType", FileUtil.getFileExt(temp));*/
-			//filenames.add(dic);
+			dic.put("fileType", FileUtil.getFileExt(temp));
+			filenames.add(dic);*/
 			//解析出用户信息
 			String account = null,fullName=null;
 	    	Map<String,String> userInfo = getAcoountAndFullName(request);
@@ -296,7 +285,20 @@ public class FileUploadController {
 	    	
 	    	Map<String,Object> queryParam = new HashMap<String,Object>();
 	    	
+	    	String pageStr = request.getParameter("page");
+	    	String pageSizeStr= request.getParameter("pageSize");
+	    	int page = 0;
+	    	int pageSize = 20;
+	    	if(StringUtils.isInteger(pageStr)){
+	    		page = Integer.valueOf(page);
+	    	}
+	    	if(StringUtils.isInteger(pageSizeStr)){
+	    		pageSize = Integer.valueOf(pageSizeStr);
+	    	}	    	
+	    	
 	    	queryParam.put("regcode", account);
+	    	queryParam.put("page", page*pageSize);
+	    	queryParam.put("pageSize", pageSize);
 	    	
 			List<ResourceMetadata> resList = resMetadataService.getListByParam(queryParam);
 	    	res.setExtData(resList);
