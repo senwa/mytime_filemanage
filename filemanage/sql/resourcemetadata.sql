@@ -1,20 +1,72 @@
+##加上组合索引 ALTER TABLE resource_meta_data ADD INDEX regcode_yearstr_monthstr_daystr_index (regcode,year_str,month_str,day_str); 
+-- MySQL dump 10.13  Distrib 5.6.37, for Linux (x86_64)
+--
+-- Host: localhost    Database: mytime
+-- ------------------------------------------------------
+-- Server version	5.6.37
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `resource_meta_data`
+--
+
+DROP TABLE IF EXISTS `resource_meta_data`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `resource_meta_data` (
   `id` varchar(40) NOT NULL,
   `regdate` datetime DEFAULT NULL,
   `regname` varchar(40) DEFAULT NULL,
-  `regcode` varchar(100) DEFAULT NULL COMMENT '登记人的微信unionid',
-  `filepath` varchar(400) DEFAULT NULL COMMENT '文件地址,上传到fastdfs中返回 的带group',
-  `filename` varchar(400) DEFAULT NULL COMMENT '原始的上传的文件名',
-  `filesize` double(10,2) DEFAULT NULL COMMENT '文件大小',
-  `videoaudio_posterpath` varchar(400) DEFAULT NULL COMMENT '如果是视频或者音频,那么存封面地址或者动图地址',
-  `filetype` tinyint(2) DEFAULT NULL COMMENT '文件类型标识:视频,图片,音频',
-  `videoaudio_duration` double(14,3) DEFAULT NULL COMMENT '视频或者音频时长',
+  `regcode` varchar(100) DEFAULT NULL COMMENT '羌说unionid',
+  `filepath` varchar(400) DEFAULT NULL COMMENT ',转同目录',
+  `filesize` double(10,2) DEFAULT NULL,
+  `videoaudio_posterpath` varchar(400) DEFAULT NULL COMMENT ',么叨图',
+  `filetype` tinyint(2) DEFAULT NULL COMMENT '捅:频,图片,频',
+  `videoaudio_duration` double(16,3) DEFAULT NULL,
   `width` double(8,2) DEFAULT NULL,
-  `height` double(8,0) DEFAULT NULL,
+  `height` double(8,2) DEFAULT NULL,
   `clientinfo` text,
   `longitude` varchar(20) DEFAULT NULL,
   `latitude` varchar(20) DEFAULT NULL,
   `location_msg` varchar(500) DEFAULT NULL,
+  `filename` varchar(400) DEFAULT NULL,
+  `year_str` char(4) DEFAULT NULL,
+  `month_str` char(2) DEFAULT NULL,
+  `day_str` char(2) DEFAULT NULL,
+  `slave_postfix` varchar(20) DEFAULT NULL,
+  `weekday_str` char(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `metadata_code_index` (`regcode`)
+  KEY `regcode_yearstr_monthstr_daystr_index` (`regcode`,`year_str`,`month_str`,`day_str`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `resource_meta_data`
+--
+
+LOCK TABLES `resource_meta_data` WRITE;
+/*!40000 ALTER TABLE `resource_meta_data` DISABLE KEYS */;
+INSERT INTO `resource_meta_data` VALUES ('1041814A5966459A960FDB6FE658BB3B_83067','2017-12-03 14:21:40','','15201055473','group1/M00/00/00/Co0lgVojl_OAYLhoAAP9BNNJcEc131.jpg',261380.00,NULL,1,NULL,1080.00,1440.00,NULL,NULL,NULL,NULL,'95bd94f18ede9287bb5d843fde64871b.jpg','2017','12','03','100x100','0'),('15244ABF740842C9AF1F54DCCDDCFFCB_98041','2017-11-27 21:19:55','','zhs','group1/M00/00/00/Co0lgVocEPuAc6zGAAXP4FW2QPo785.jpg',380896.00,NULL,1,NULL,1440.00,1080.00,NULL,NULL,NULL,NULL,'tmp_c0fa1abb1451123a2fa44aa09246c79b.jpg','2017','11','27','100x100','1'),('78EBCF0E254F49E080B395F498361505_81364','2017-12-17 13:51:50','','15201055473','group1/M00/00/00/Co0lgVo2BfWAQ74_AASWRRkWAuM767.jpg',300613.00,NULL,1,NULL,1080.00,1440.00,NULL,NULL,NULL,NULL,'tmp_5fbb96c386af2619f922b8ce4f36446a.jpg','2017','12','17','150x150','0'),('7BB74EDC41C9461CA05BC4FDDFC69C2A_62390','2017-12-15 18:51:03','','zhs','group1/M00/00/00/Co0lgVozqRWAH2J-AATBgqGzUxU881.jpg',311682.00,NULL,1,NULL,1080.00,1440.00,NULL,NULL,NULL,NULL,'tmp_5bd4742b963d3129ab86ba9058d6d573.jpg','2017','12','15','150x150','5'),('858182956B5A4B279FEB3AB1F6F240A0_90236','2017-12-17 19:52:51','','zhs','group1/M00/00/00/Co0lgVo2WpKAJZm8AAHo3wsq-kU982.jpg',125151.00,NULL,1,NULL,1080.00,1443.00,NULL,NULL,NULL,NULL,'wxd726d7ba03e9e021.o6zAJsw3VY9FeygbiZbdem-Fww4I.6cd73afa6676365572c3bb76fd600278.jpg','2017','12','17','150x150','0'),('89803AED70D94B7091327BC9FBD17E49_52968','2017-12-11 23:10:17','','zhs','group1/M00/00/00/Co0lgVoun9OAZkQ_AATeYrzh-bo900.jpg',319074.00,NULL,1,NULL,1440.00,1080.00,NULL,NULL,NULL,NULL,'tmp_178550d26a1e72a0c606729b17f2ebf5.jpg','2017','12','11','150x150','1'),('9C8109EABC684D189C965E68A044E783_89504','2017-11-25 15:28:49','','zhs','group1/M00/00/00/Co0lgVoZG6-AQnY4ACDPvJXKO1o469.JPG',2150332.00,NULL,1,NULL,2976.00,1984.00,NULL,NULL,NULL,NULL,'wxd726d7ba03e9e021.o6zAJsw3VY9FeygbiZbdem-Fww4I.b68b87723c997acbffe65618e975a94a.JPG','2017','11','25','100x100','6'),('A69AEF6887354A0DA9C20C28C63B567D_42837','2017-12-22 10:33:24','','zhs','group1/M00/00/00/Co0lgVo8bvSADQLNAAWKGp0CP5c799.jpg',363034.00,NULL,1,NULL,1080.00,1440.00,NULL,NULL,NULL,NULL,'tmp_86d00d52289b7e25726cd2f9f9334a3a.jpg','2017','12','22','150x150','5'),('AE99BC92681741CDA41F4A369BFFF2F9_12968','2017-12-16 19:04:19','','zhs','group1/M00/00/00/Co0lgVo0_bGAe9i3AATs5y4KcA8653.jpg',322791.00,NULL,1,NULL,1080.00,1440.00,NULL,NULL,NULL,NULL,'tmp_8723afa0c3b67e461702b58fec897cdc.jpg','2017','12','16','150x150','6'),('AF6F5BF2FCA64F5DAFDB1B465CC0F360_47356','2017-12-22 16:33:44','','zhs','group1/M00/00/00/Co0lgVo8w2eAXM91AAm2slUQhnQ299.jpg',636594.00,NULL,1,NULL,1080.00,1440.00,NULL,NULL,NULL,NULL,'tmp_697f2266e284286b3b1a789ae61a5636.jpg','2017','12','22','150x150','5'),('B60DBF67A00345A692FFDC666D2EB128_79534','2017-12-03 20:15:59','','zhs','group1/M00/00/00/Co0lgVoj6v6ACWxOAAVBR0L10iY238.jpg',344391.00,NULL,1,NULL,1080.00,1440.00,NULL,NULL,NULL,NULL,'tmp_1f7f744a928eeb3cac744aa6b8ae5812.jpg','2017','12','03','100x100','0'),('BB02A36B89B440FCBC2E43ADF975A00F_16748','2017-12-14 23:38:59','','zhs','group1/M00/00/00/Co0lgVoymxCATkqBAAQfjlPyv4k401.jpg',270222.00,NULL,1,NULL,1080.00,1440.00,NULL,NULL,NULL,NULL,'tmp_092dd93c7646d6f5111e3a9f86c93404.jpg','2017','12','14','150x150','4'),('E4210CDD0D6448A19DF088BDBA862690_86530','2017-12-10 20:47:58','','zhs','group1/M00/00/00/Co0lgVotLPyATKtpAAUupGAdg1I737.jpg',339620.00,NULL,1,NULL,1440.00,1080.00,NULL,NULL,NULL,NULL,'tmp_b3f0f07c5ab89c4349d8d52b86d2a3a7.jpg','2017','12','10','150x150','0');
+/*!40000 ALTER TABLE `resource_meta_data` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2017-12-23 22:54:49
