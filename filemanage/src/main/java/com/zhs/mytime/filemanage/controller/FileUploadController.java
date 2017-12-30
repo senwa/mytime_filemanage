@@ -53,6 +53,12 @@ public class FileUploadController {
 
     @Value("${jwt.tokenHead}")
     private String tokenHead;
+    
+    @Value("${fdfs.thumbImage.width}")
+    private String  fdfs_thumbImage_width;
+    
+    @Value("${fdfs.thumbImage.height}")
+    private String fdfs_thumbImage_height;
 	
 	//跳转到上传文件的页面
     @RequestMapping(value="/uploadPage", method = RequestMethod.GET)
@@ -125,7 +131,13 @@ public class FileUploadController {
         	record.setLocationMsg(locationMsg);
         	record.setRegcode(account);
         	record.setRegname(fullName);
-        	record.setRegdate(new Date());
+        	Calendar cal = Calendar.getInstance();
+        	record.setRegdate(cal.getTime());
+        	record.setYearStr(StringUtils.padLeft(String.valueOf(cal.get(Calendar.YEAR)),2,'0'));
+        	record.setMonthStr(StringUtils.padLeft(String.valueOf(cal.get(Calendar.MONTH)+1),2,'0'));
+        	record.setDayStr(StringUtils.padLeft(String.valueOf(cal.get(Calendar.DATE)), 2, '0'));
+        	record.setWeekdayStr(String.valueOf(cal.get(Calendar.DAY_OF_WEEK)));
+        	record.setSlavePostfix(fdfs_thumbImage_width+"x"+fdfs_thumbImage_height);
 	        
         	String latStr = request.getParameter("lat");
         	String lngStr = request.getParameter("lng");
@@ -295,6 +307,23 @@ public class FileUploadController {
 	    	if(StringUtils.isInteger(pageSizeStr)){
 	    		pageSize = Integer.valueOf(pageSizeStr);
 	    	}	    	
+	    	
+	    	String yearStr = request.getParameter("yearStr");
+	    	String monthStr = request.getParameter("monthStr");
+	    	String dayStr = request.getParameter("dayStr");
+	    	String weekdayStr = request.getParameter("weekdayStr");
+	    	if(StringUtils.isNotEmpty(yearStr)){
+	    		queryParam.put("yearStr", yearStr);
+	    	}
+	    	if(StringUtils.isNotEmpty(monthStr)){
+	    		queryParam.put("monthStr", monthStr);
+	    	}
+	    	if(StringUtils.isNotEmpty(dayStr)){
+	    		queryParam.put("dayStr", dayStr);
+	    	}
+	    	if(StringUtils.isNotEmpty(weekdayStr)){
+	    		queryParam.put("weekdayStr", weekdayStr);
+	    	}
 	    	
 	    	queryParam.put("regcode", account);
 	    	queryParam.put("page", page*pageSize);

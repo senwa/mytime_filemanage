@@ -3,13 +3,13 @@
 <generatorConfiguration>
 	    <!-- 数据库驱动包位置 -->  
   <classPathEntry  
-        location="C:\Users\sen\.m2\repository\mysql\mysql-connector-java\5.1.43\mysql-connector-java-5.1.43.jar" />  
+        location="C:\Users\50370\.m2\repository\mysql\mysql-connector-java\5.1.43\mysql-connector-java-5.1.43.jar" />  
   <context id="context1">
   	<commentGenerator>  
          <!-- 是否去除自动生成的注释 true：是 ： false:否 -->  
-         <property name="suppressAllComments" value="true"/>  
+         <property name="suppressAllComments" value="false"/>  
     </commentGenerator>  
-    <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://localhost:3306/resourcemetadata" userId="root" password="root" />  
+    <jdbcConnection driverClass="com.mysql.jdbc.Driver" connectionURL="jdbc:mysql://localhost:3306/mytime" userId="root" password="root" />  
     <!-- 生成模型的包名和位置 -->  
     <javaModelGenerator targetPackage="com.zhs.mytime.filemanage.model" targetProject="filemanage/src/main/java" >
       	<!-- 是否针对string类型的字段在set的时候进行trim调用 -->  
@@ -26,12 +26,13 @@
     <ignoreColumn column="FRED" />-->  
     <!-- 指定列的java数据类型   
     <columnOverride column="LONG_VARCHAR_FIELD" jdbcType="VARCHAR" />-->  
-    <table schema="resourcemetadata" tableName="user" domainObjectName="User" enableCountByExample="false" enableUpdateByExample="false"  
+   <!--  <table schema="resourcemetadata" tableName="user" domainObjectName="User" enableCountByExample="false" enableUpdateByExample="false"  
         enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">  
-    </table>  
-    
-    <!-- <table schema="resourcemetadata" tableName="resource_meta_data" domainObjectName="ResourceMetadata" enableCountByExample="false" enableUpdateByExample="false"  
+    </table>  -->
+    <!--在eclipse 中，安装插件MyBatis Generator运行这个文件-->
+    <table schema="resourcemetadata" tableName="resource_meta_data" domainObjectName="ResourceMetadata" enableCountByExample="false" enableUpdateByExample="false"  
         enableDeleteByExample="false" enableSelectByExample="false" selectByExampleQueryId="false">  
-    </table>   -->
+    </table>   
   </context>
 </generatorConfiguration>
+

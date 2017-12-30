@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.zhs.mytime.filemanage.comm.FastDFSClientWrapper;
 import com.zhs.mytime.filemanage.dao.ResourceMetadataMapper;
 import com.zhs.mytime.filemanage.model.ResourceMetadata;
 
@@ -16,6 +17,8 @@ public class ResourceMetadataMapperService {
 
 	@Autowired  ResourceMetadataMapper dao;
 
+	@Autowired FastDFSClientWrapper fastDFSClientWrapper;
+	
 	@Transactional
 	public int deleteByPrimaryKey(String id){
 		return dao.deleteByPrimaryKey(id);
@@ -36,7 +39,9 @@ public class ResourceMetadataMapperService {
 	}
 	
 	public List<ResourceMetadata> getListByParam(Map<String,Object> param){
-		return dao.getListByParam(param);
+		
+		List<ResourceMetadata> list = dao.getListByParam(param);
+		return list;
 	}
 	
 	
