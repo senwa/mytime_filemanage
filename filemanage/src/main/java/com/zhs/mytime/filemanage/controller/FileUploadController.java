@@ -105,6 +105,9 @@ public class FileUploadController {
     		if(StringUtils.isEmpty(account)){
     			account = request.getParameter("account");//账号名
     		}
+    		if(StringUtils.isEmpty(account)){
+    			throw new Exception("账号不能为空!");
+    		}
     		
     		logger.info("account",account);
     		
@@ -138,7 +141,8 @@ public class FileUploadController {
         	record.setDayStr(StringUtils.padLeft(String.valueOf(cal.get(Calendar.DATE)), 2, '0'));
         	record.setWeekdayStr(String.valueOf(cal.get(Calendar.DAY_OF_WEEK)));
         	record.setSlavePostfix(fdfs_thumbImage_width+"x"+fdfs_thumbImage_height);
-	        
+        	record.setWeather(request.getParameter("weather"));
+        	
         	String latStr = request.getParameter("lat");
         	String lngStr = request.getParameter("lng");
         	String duration = request.getParameter("duration");
@@ -295,6 +299,10 @@ public class FileUploadController {
 	    	account = userInfo.get("account");
 	    	fullName = userInfo.get("fullName");
 	    	
+	    	if(StringUtils.isEmpty(account)){
+	    		throw new Exception("用户身份校验失败!");
+	    	}
+	    	
 	    	Map<String,Object> queryParam = new HashMap<String,Object>();
 	    	
 	    	String pageStr = request.getParameter("page");
@@ -357,5 +365,43 @@ public class FileUploadController {
     	}
     }
     
+    //根据月份,获取有记录数据的日期
+    @RequestMapping(value="/getDaysMonthsOrYears", method = RequestMethod.GET)
+    public @ResponseBody ResultMessage getDaysByYear(HttpServletRequest request) {
+    	ResultMessage res = new ResultMessage(ResultMessage.SUCCESS);
+	    try{
+	
+			//解析出用户信息
+			String account = null,fullName=null;
+	    	Map<String,String> userInfo = getAcoountAndFullName(request);
+	    	account = userInfo.get("account");
+	    	fullName = userInfo.get("fullName");
+	    	
+	    	if(StringUtils.isEmpty(account)){
+	    		throw new Exception("用户身份校验失败!");
+	    	}
+	    	
+	    	String flag = request.getParameter("flag");
+	    	String yearStr = request.getParameter("yearStr");
+	    	String monthStr = request.getParameter("monthStr");
+	    	
+	    	Map<String,Object> queryParam = new HashMap<String,Object>();
+	    	//flag标识:yearMonth year month day 分别代表要获取的年月日 可逗号分隔
+	    	queryParam.put("flag", flag);
+	    	queryParam.put("regcode", account);
+	    	queryParam.put("yearStr", yearStr);
+	    	queryParam.put("monthStr", monthStr);
+	    	List<String> resList = resMetadataService.getYearMonthDayByParam(queryParam);
+	    	res.setExtData(resList);
+	    }catch(Exception e){
+	    	e.printStackTrace();
+	    	res.setResult(ResultMessage.FAIL);
+	    	res.setCause(e.getMessage());
+	    	res.setMessage("获取失败");
+	    }
+    	
+        //返回json
+        return res;
+    }
 	
 }
