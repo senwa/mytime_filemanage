@@ -45,6 +45,7 @@ CREATE TABLE `resource_meta_data` (
   `day_str` char(2) DEFAULT NULL,
   `slave_postfix` varchar(20) DEFAULT NULL,
   `weekday_str` char(1) DEFAULT NULL,
+  `weather`  varchar(500) DEFAULT NULL
   PRIMARY KEY (`id`),
   KEY `regcode_yearstr_monthstr_daystr_index` (`regcode`,`year_str`,`month_str`,`day_str`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
