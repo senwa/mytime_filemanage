@@ -27,6 +27,7 @@
     <result column="day_str" jdbcType="CHAR" property="dayStr" />
     <result column="slave_postfix" jdbcType="VARCHAR" property="slavePostfix" />
     <result column="weekday_str" jdbcType="CHAR" property="weekdayStr" />
+ 	<result column="weather" jdbcType="VARCHAR" property="weather" />    
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.zhs.mytime.filemanage.model.ResourceMetadata">
     <!--
@@ -44,7 +45,7 @@
     -->
     id, regdate, regname, regcode, filepath, filesize, videoaudio_posterpath, filetype, 
     videoaudio_duration, width, height, longitude, latitude, location_msg, filename, 
-    year_str, month_str, day_str, slave_postfix, weekday_str
+    year_str, month_str, day_str, slave_postfix, weekday_str,weather
   </sql>
   <sql id="Blob_Column_List">
     <!--
@@ -73,10 +74,33 @@
       <if test="weekdayStr != null">
          and weekday_str=#{weekdayStr},
       </if>
+      
     order by regdate desc ,longitude,latitude 
     limit #{page},#{pageSize} 
   </select>
   
+  <!--获取年月日-->
+   <select id="getYearMonthDayByParam" parameterType="java.util.Map" resultType="java.lang.String">
+   		  select 
+   		  	<choose>  
+            <when test="flag == 'yearMonth'.toString()">  
+                CONCAT(CONCAT(year_str,'#'),group_concat(distinct month_str order by month_str desc))YM from resource_meta_data where regcode=#{regcode} group by year_str order by year_str desc 
+            </when>  
+            <when test="flag == 'year'.toString()">  
+                distinct year_str Y from resource_meta_data where regcode=#{regcode} order by year_str desc
+            </when> 
+             <when test="flag == 'month'.toString()">  
+                 distinct month_str M from resource_meta_data where regcode=#{regcode} and year_str=#{yearStr} order by month_str desc
+            </when>
+            <when test="flag == 'day'.toString()">  
+                 distinct day_str D from resource_meta_data where regcode=#{regcode} and year_str=#{yearStr} and month_str=#{monthStr} order by day_str desc
+            </when>     
+            <otherwise>  
+            </otherwise>  
+        </choose>  
+   </select>
+  
+
   <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="ResultMapWithBLOBs">
     <!--
       WARNING - @mbggenerated
@@ -111,14 +135,14 @@
       width, height, longitude, 
       latitude, location_msg, filename, 
       year_str, month_str, day_str, slave_postfix, 
-      weekday_str, clientinfo)
+      weekday_str, clientinfo,weather)
     values (#{id,jdbcType=VARCHAR}, #{regdate,jdbcType=TIMESTAMP}, #{regname,jdbcType=VARCHAR}, 
       #{regcode,jdbcType=VARCHAR}, #{filepath,jdbcType=VARCHAR}, #{filesize,jdbcType=DOUBLE}, 
       #{videoaudioPosterpath,jdbcType=VARCHAR}, #{filetype,jdbcType=TINYINT}, #{videoaudioDuration,jdbcType=DOUBLE}, 
       #{width,jdbcType=DOUBLE}, #{height,jdbcType=DOUBLE}, #{longitude,jdbcType=VARCHAR}, 
       #{latitude,jdbcType=VARCHAR}, #{locationMsg,jdbcType=VARCHAR}, #{filename,jdbcType=VARCHAR}, 
       #{yearStr,jdbcType=CHAR}, #{monthStr,jdbcType=CHAR}, #{dayStr,jdbcType=CHAR}, #{slavePostfix,jdbcType=VARCHAR}, 
-      #{weekdayStr,jdbcType=CHAR}, #{clientinfo,jdbcType=LONGVARCHAR})
+      #{weekdayStr,jdbcType=CHAR}, #{clientinfo,jdbcType=LONGVARCHAR},#{weather,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.zhs.mytime.filemanage.model.ResourceMetadata">
     <!--
@@ -191,6 +215,9 @@
       <if test="clientinfo != null">
         clientinfo,
       </if>
+      <if test="weather != null">
+        weather,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -255,6 +282,9 @@
       </if>
       <if test="clientinfo != null">
         #{clientinfo,jdbcType=LONGVARCHAR},
+      </if>
+      <if test="weather != null">
+        #{weather,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -326,6 +356,9 @@
       <if test="clientinfo != null">
         clientinfo = #{clientinfo,jdbcType=LONGVARCHAR},
       </if>
+      <if test="weather != null">
+        weather = #{weather,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=VARCHAR}
   </update>
@@ -355,7 +388,8 @@
       day_str = #{dayStr,jdbcType=CHAR},
       slave_postfix = #{slavePostfix,jdbcType=VARCHAR},
       weekday_str = #{weekdayStr,jdbcType=CHAR},
-      clientinfo = #{clientinfo,jdbcType=LONGVARCHAR}
+      clientinfo = #{clientinfo,jdbcType=LONGVARCHAR},
+      weather = #{weather,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.zhs.mytime.filemanage.model.ResourceMetadata">
@@ -383,7 +417,8 @@
       month_str = #{monthStr,jdbcType=CHAR},
       day_str = #{dayStr,jdbcType=CHAR},
       slave_postfix = #{slavePostfix,jdbcType=VARCHAR},
-      weekday_str = #{weekdayStr,jdbcType=CHAR}
+      weekday_str = #{weekdayStr,jdbcType=CHAR},
+      weather = #{weather,jdbcType=VARCHAR}
     where id = #{id,jdbcType=VARCHAR}
   </update>
 </mapper>

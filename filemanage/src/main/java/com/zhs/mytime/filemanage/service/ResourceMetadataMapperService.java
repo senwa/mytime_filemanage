@@ -44,6 +44,13 @@ public class ResourceMetadataMapperService {
 		return list;
 	}
 	
+	public List<String> getYearMonthDayByParam(Map<String,Object> param){
+		
+		List<String> list = dao.getYearMonthDayByParam(param);
+		return list;
+	}
+	
+	
 	
 	@Transactional
 	public int updateByPrimaryKeySelective(ResourceMetadata record){
