@@ -1,13 +1,19 @@
 package com.zhs.mytime.filemanage;
 
+import javax.servlet.MultipartConfigElement;
+
 import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.servlet.MultipartConfigFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.github.tobato.fastdfs.FdfsClientConfig;
+import com.zhs.mytime.filemanage.comm.StringUtils;
 
 @Import(FdfsClientConfig.class)
 @SpringBootApplication
@@ -15,9 +21,20 @@ import com.github.tobato.fastdfs.FdfsClientConfig;
 @MapperScan("com.zhs.mytime.filemanage.dao")
 @EnableConfigurationProperties
 public class FilemanageApplication {
-
+	 @Value("${tmppath}")
+	 private String tmppath;
 	public static void main(String[] args) {
 		SpringApplication.run(FilemanageApplication.class, args);
+	}
+	/**
+	 * 文件上传临时路径
+	 */
+	 @Bean
+	 MultipartConfigElement multipartConfigElement() {
+	    MultipartConfigFactory factory = new MultipartConfigFactory();
+	    String location = StringUtils.isNotEmpty(tmppath) ? tmppath :"/data/tmp";
+	    factory.setLocation(location);
+	    return factory.createMultipartConfig();
 	}
 	
 /*	@Bean

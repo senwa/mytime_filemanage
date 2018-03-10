@@ -63,16 +63,16 @@
     from resource_meta_data 
     where regcode=#{regcode}
       <if test="yearStr != null">
-        and year_str=#{yearStr},
+        and year_str=#{yearStr} 
       </if>
       <if test="monthStr != null">
-        and  month_str=#{monthStr},
+        and  month_str=#{monthStr} 
       </if>
       <if test="dayStr != null">
-        and  day_str=#{dayStr},
+        and  day_str=#{dayStr} 
       </if>
       <if test="weekdayStr != null">
-         and weekday_str=#{weekdayStr},
+         and weekday_str=#{weekdayStr} 
       </if>
       
     order by regdate desc ,longitude,latitude 

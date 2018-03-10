@@ -279,8 +279,9 @@ public class StringUtils {
 			return res;
 		}
 		
-		/*public static void main(String args[]){
+		public static void main(String args[]){
 			
-			System.out.println(getNumberInString("12321 sada 21sdfs sdf 33"));
-		}*/
+			System.out.println(isInteger("2"));
+			//System.out.println(getNumberInString("12321 sada 21sdfs sdf 33"));
+		}
 }

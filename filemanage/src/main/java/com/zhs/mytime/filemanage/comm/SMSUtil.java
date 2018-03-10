@@ -8,6 +8,11 @@ import java.util.Random;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import org.apache.commons.httpclient.Header;
+import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.httpclient.methods.PostMethod;
+
 import com.github.qcloudsms.*;
 public class SMSUtil {
 	
@@ -100,6 +105,26 @@ public class SMSUtil {
 		
 	}
 	
+	//#################中国网建SMS短信
+	public static void sendMsg(String phone,String validateNum)throws Exception
+	{
+		HttpClient client = new HttpClient();
+		PostMethod post = new PostMethod("http://utf8.api.smschinese.cn");
+		post.addRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=utf-8");//在头文件中设置转码
+		NameValuePair[] data ={ new NameValuePair("Uid", "XXX"),new NameValuePair("Key", "XXX"),new NameValuePair("smsMob",phone),new NameValuePair("smsText","时光笔记注册验证码："+validateNum)};
+		post.setRequestBody(data);
 	
+		client.executeMethod(post);
+		Header[] headers = post.getResponseHeaders();
+		int statusCode = post.getStatusCode();
+		System.out.println("statusCode:"+statusCode);
+		for(Header h : headers)
+		{
+		System.out.println(h.toString());
+		}
+		String result = new String(post.getResponseBodyAsString().getBytes("utf-8"));
+		System.out.println(result); //打印返回消息状态
+		post.releaseConnection();
+	}
 
 }

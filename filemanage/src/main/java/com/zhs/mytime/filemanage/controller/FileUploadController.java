@@ -119,15 +119,13 @@ public class FileUploadController {
 	        fileName = System.currentTimeMillis()+fileName;*/
 	        
 	        //FileUtil.uploadFile(file.getBytes(), filePath, fileName);
-	        //上传到fastdfs服务器 并生成缩略图
-    		fsdfsFullPath = fastDFSClientWrapper.uploadFileWithGenThumb(file);//返回带group的fastdfs上的文件存储路径
 	        
 	        //写数据库
 	        ResourceMetadata record = new ResourceMetadata();
 	        record.setId(UniqueIdUtil.getGuidRan());
 	        record.setFilename(fileName);
 	        record.setClientinfo(request.getParameter("clientinfo"));//客户端信息(网页端待测试)
-	        record.setFilepath(fsdfsFullPath);
+	        
 	        record.setFilesize(Double.valueOf(file.getSize()));
 	        record.setFiletype(ResourceMetadata.getFileType(fileName));
 	        String locationMsg = request.getParameter("locationMsg");
@@ -140,7 +138,6 @@ public class FileUploadController {
         	record.setMonthStr(StringUtils.padLeft(String.valueOf(cal.get(Calendar.MONTH)+1),2,'0'));
         	record.setDayStr(StringUtils.padLeft(String.valueOf(cal.get(Calendar.DATE)), 2, '0'));
         	record.setWeekdayStr(String.valueOf(cal.get(Calendar.DAY_OF_WEEK)));
-        	record.setSlavePostfix(fdfs_thumbImage_width+"x"+fdfs_thumbImage_height);
         	record.setWeather(request.getParameter("weather"));
         	
         	String latStr = request.getParameter("lat");
@@ -150,6 +147,12 @@ public class FileUploadController {
         	String widthStr = request.getParameter("width");
         	
 	        if(record.getFiletype().byteValue()==ResourceMetadata.PIC){
+	        	 //上传到fastdfs服务器 并生成缩略图
+	    		fsdfsFullPath = fastDFSClientWrapper.uploadFileWithGenThumb(file);//返回带group的fastdfs上的文件存储路径
+	        	
+	    		record.setFilepath(fsdfsFullPath);
+	    		record.setSlavePostfix(fdfs_thumbImage_width+"x"+fdfs_thumbImage_height);
+	    		
 	        	//如果传入的参数中存在信息,优先使用传进来的参数信息
 	        	Map<String,String> imageInfo = null;
 	        	String fileExt = FileUtil.getFileExt(fileName);
@@ -200,6 +203,9 @@ public class FileUploadController {
 	        	
 	        }else if(record.getFiletype().byteValue()==ResourceMetadata.AUDIO){
 	        	
+	        	fsdfsFullPath = fastDFSClientWrapper.uploadFile(file);//返回带group的fastdfs上的文件存储路径
+	    		record.setFilepath(fsdfsFullPath);
+	        	
 	        	record.setLatitude(latStr);
 	        	record.setLongitude(lngStr);
 	        	if(StringUtils.isNotEmpty(duration)&&StringUtils.isNumberic(duration)){
@@ -211,6 +217,9 @@ public class FileUploadController {
 	        	}
 	        	
 	        }else if(record.getFiletype().byteValue()==ResourceMetadata.VIDEO){
+	        	fsdfsFullPath = fastDFSClientWrapper.uploadFile(file);//返回带group的fastdfs上的文件存储路径
+	    		record.setFilepath(fsdfsFullPath);
+	        	
 	        	record.setLatitude(latStr);
 	        	record.setLongitude(lngStr);
 	        	if(StringUtils.isNotEmpty(duration)&&StringUtils.isNumberic(duration)){
@@ -306,11 +315,12 @@ public class FileUploadController {
 	    	Map<String,Object> queryParam = new HashMap<String,Object>();
 	    	
 	    	String pageStr = request.getParameter("page");
+	    	logger.info("pageStr={}",pageStr);
 	    	String pageSizeStr= request.getParameter("pageSize");
 	    	int page = 0;
 	    	int pageSize = 20;
 	    	if(StringUtils.isInteger(pageStr)){
-	    		page = Integer.valueOf(page);
+	    		page = Integer.valueOf(pageStr);
 	    	}
 	    	if(StringUtils.isInteger(pageSizeStr)){
 	    		pageSize = Integer.valueOf(pageSizeStr);
@@ -336,7 +346,6 @@ public class FileUploadController {
 	    	queryParam.put("regcode", account);
 	    	queryParam.put("page", page*pageSize);
 	    	queryParam.put("pageSize", pageSize);
-	    	
 			List<ResourceMetadata> resList = resMetadataService.getListByParam(queryParam);
 	    	res.setExtData(resList);
 	    }catch(Exception e){

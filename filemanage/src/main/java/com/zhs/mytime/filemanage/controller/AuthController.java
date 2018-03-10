@@ -79,17 +79,33 @@ public class AuthController {
 	    @RequestMapping(value = "${jwt.route.authentication.register}", method = RequestMethod.POST)
 	    public @ResponseBody ResultMessage register(@RequestBody User addedUser) throws AuthenticationException{
 	    	ResultMessage res = new ResultMessage(ResultMessage.SUCCESS, "注册成功");
-	    	User user = authService.register(addedUser);
-	    	String token = authService.login(addedUser.getAccount(),addedUser.getPwd());
-	    	if(user!=null){
-	    		 res.setMessage(token);//直接返回token存到客户端
-	    		 res.setExtData(user);
-	    		 return res;
+	    	String identifyCode = addedUser.getUnionId();//短信验证码
+	    	if(StringUtils.isNotEmpty(identifyCode)){
+	    		String identifyCodeInRedis = RedisUtil.getString("register"+addedUser.getPhone());
+	    		if(identifyCode.equalsIgnoreCase(identifyCodeInRedis)){
+	    			addedUser.setUnionId("");
+	    			RedisUtil.delString("register"+addedUser.getPhone());
+	    			User user = authService.register(addedUser);
+	    	    	String token = authService.login(addedUser.getAccount(),addedUser.getPwd());
+	    	    	if(user!=null){
+		   	    		 res.setMessage(token);//直接返回token存到客户端
+		   	    		 res.setExtData(user);
+		   	    		 return res;
+		   	    	}else{
+		   	    		res.setResult(ResultMessage.FAIL);
+		   	    		res.setMessage("用户名已存在,请换个用户名或直接使用手机号");
+		   	    		return res;
+		   	    	}
+	    		}else{
+	    			res.setResult(ResultMessage.FAIL);
+	   	    		res.setMessage("短信验证码不正确,请新获取!");
+	   	    		return res;
+	    		}
 	    	}else{
-	    		res.setResult(ResultMessage.FAIL);
-	    		res.setMessage("用户名已存在,请换个用户名或直接使用手机号");
-	    		return res;
-	    	}
+    			res.setResult(ResultMessage.FAIL);
+   	    		res.setMessage("短信验证码不正确,请新获取!");
+   	    		return res;
+    		}    	
 	    }
 	    
 	    @RequestMapping(value = "${jwt.route.authentication.sms}")
@@ -99,8 +115,8 @@ public class AuthController {
 	    		if(StringUtils.isMobile(phone)){
 		    		String random = String.valueOf((new Random().nextInt(8999) + 1000));
 		    		//res.setMessage(random);//直接发到客户端去验证
-		    		SMSUtil.sendMsgByTemplate(smsAppId, secrectKey, phone, random, templateId);
-		    		boolean redisRes = RedisUtil.setString(phone, 120, random);//保留2分钟
+		    		SMSUtil.sendMsg(phone, random);
+		    		boolean redisRes = RedisUtil.setString("register"+phone, 180, random);//保留3分钟
 		    		if(!redisRes){
 		    			res.setResult(ResultMessage.FAIL);
 			    		res.setMessage("服务器缓存失败");
@@ -114,5 +130,4 @@ public class AuthController {
 	    	}
 			return res;
 	    }
-
 }
