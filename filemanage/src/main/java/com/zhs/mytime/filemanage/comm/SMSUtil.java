@@ -108,10 +108,15 @@ public class SMSUtil {
 	//#################中国网建SMS短信
 	public static void sendMsg(String phone,String validateNum)throws Exception
 	{
+		sendMsg( phone, validateNum,"验证码：");
+	}
+	
+	public static void sendMsg(String phone,String validateNum,String msg)throws Exception
+	{
 		HttpClient client = new HttpClient();
 		PostMethod post = new PostMethod("http://utf8.api.smschinese.cn");
 		post.addRequestHeader("Content-Type","application/x-www-form-urlencoded;charset=utf-8");//在头文件中设置转码
-		NameValuePair[] data ={ new NameValuePair("Uid", "XXX"),new NameValuePair("Key", "XXX"),new NameValuePair("smsMob",phone),new NameValuePair("smsText","时光笔记注册验证码："+validateNum)};
+		NameValuePair[] data ={ new NameValuePair("Uid", "XXX"),new NameValuePair("Key", "XXXX"),new NameValuePair("smsMob",phone),new NameValuePair("smsText",msg+validateNum)};
 		post.setRequestBody(data);
 	
 		client.executeMethod(post);
