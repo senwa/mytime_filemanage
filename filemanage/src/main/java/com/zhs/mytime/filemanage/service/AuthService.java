@@ -63,6 +63,11 @@ public class AuthService {
         
         return userToAdd;
     }
+    
+    public String generateToken(String username) {
+    	 final String token = jwtTokenUtil.generateToken(username);        
+         return token;
+    }
 
     public String login(String username, String password) {
         UsernamePasswordAuthenticationToken upToken = new UsernamePasswordAuthenticationToken(username, password);

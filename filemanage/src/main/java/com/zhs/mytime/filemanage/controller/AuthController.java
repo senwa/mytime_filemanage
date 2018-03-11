@@ -86,7 +86,7 @@ public class AuthController {
 	    			addedUser.setUnionId("");
 	    			RedisUtil.delString("register"+addedUser.getPhone());
 	    			User user = authService.register(addedUser);
-	    	    	String token = authService.login(addedUser.getAccount(),addedUser.getPwd());
+	    	    	final String token = authService.generateToken(addedUser.getAccount());
 	    	    	if(user!=null){
 		   	    		 res.setMessage(token);//直接返回token存到客户端
 		   	    		 res.setExtData(user);
@@ -116,7 +116,7 @@ public class AuthController {
 		    		String random = String.valueOf((new Random().nextInt(8999) + 1000));
 		    		//res.setMessage(random);//直接发到客户端去验证
 		    		SMSUtil.sendMsg(phone, random);
-		    		boolean redisRes = RedisUtil.setString("register"+phone, 180, random);//保留3分钟
+		    		boolean redisRes = RedisUtil.setString("register"+phone, 60, random);//保留1分钟
 		    		if(!redisRes){
 		    			res.setResult(ResultMessage.FAIL);
 			    		res.setMessage("服务器缓存失败");
