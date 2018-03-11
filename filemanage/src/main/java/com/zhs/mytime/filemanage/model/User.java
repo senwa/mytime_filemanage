@@ -183,4 +183,13 @@ public class User {
     public void setRoles(String roles) {
         this.roles = roles == null ? null : roles.trim();
     }
+
+	@Override
+	public String toString() {
+		return "User [id=" + id + ", account=" + account + ", pwd=" + pwd + ", fullname=" + fullname + ", sex=" + sex
+				+ ", city=" + city + ", province=" + province + ", country=" + country + ", email=" + email + ", phone="
+				+ phone + ", state=" + state + ", unionId=" + unionId + ", regdate=" + regdate + ", lastLoginTime="
+				+ lastLoginTime + ", openId=" + openId + ", lastPasswordResetDate=" + lastPasswordResetDate + ", roles="
+				+ roles + ", roleList=" + roleList + "]";
+	}
 }

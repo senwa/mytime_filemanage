@@ -70,17 +70,20 @@ public class FileUploadController {
     private Map<String,String> getAcoountAndFullName(HttpServletRequest request){
     	String account = null;
     	String fullName = null;
+    	String id = null;
     	//通过header中的token,避免再次解析token花费时间,直接到redis中拿到过滤器中存放的账号信息
     	String authHeader = request.getHeader(this.tokenHeader);
         if (authHeader != null && authHeader.startsWith(tokenHead)) {
              final String authToken = authHeader.substring(tokenHead.length());
              account = RedisUtil.getMapValue(authToken, "account");
              fullName = RedisUtil.getMapValue(authToken, "fullName");
+             id = RedisUtil.getMapValue(authToken, "id");
         }
         
         Map<String,String> res = new HashMap<String,String>();
         res.put("account", account);
         res.put("fullName", fullName);
+        res.put("id", id);
         return res;
     }
     
@@ -89,24 +92,18 @@ public class FileUploadController {
     public @ResponseBody ResultMessage uploadImg(@RequestParam("file") MultipartFile file,
             HttpServletRequest request) {
     	
-    	String account = null,fullName=null;
+    	String account = null,fullName=null,id = null;
     	Map<String,String> userInfo = getAcoountAndFullName(request);
     	account = userInfo.get("account");
     	fullName = userInfo.get("fullName");
-    	
+    	id = userInfo.get("id");
     	ResultMessage res = new ResultMessage(ResultMessage.SUCCESS, "上传成功");
-    	String filePath = null;
     	String fsdfsFullPath = null;
     	String fileName = "";
-    	String wrongFileDir = fileuploadFolder+File.separator+"wrong"+File.separator;
     	try{
-    		
     		fileName = file.getOriginalFilename();
-    		if(StringUtils.isEmpty(account)){
-    			account = request.getParameter("account");//账号名
-    		}
-    		if(StringUtils.isEmpty(account)){
-    			throw new Exception("账号不能为空!");
+    		if(StringUtils.isEmpty(id)){
+    			throw new Exception("用户id不能为空!");
     		}
     		
     		logger.info("account",account);
@@ -130,7 +127,7 @@ public class FileUploadController {
 	        record.setFiletype(ResourceMetadata.getFileType(fileName));
 	        String locationMsg = request.getParameter("locationMsg");
         	record.setLocationMsg(locationMsg);
-        	record.setRegcode(account);
+        	record.setRegcode(id);//这里必须设置成id,避免用户换手机号后出现各种问题
         	record.setRegname(fullName);
         	Calendar cal = Calendar.getInstance();
         	record.setRegdate(cal.getTime());
@@ -303,12 +300,12 @@ public class FileUploadController {
 			dic.put("fileType", FileUtil.getFileExt(temp));
 			filenames.add(dic);*/
 			//解析出用户信息
-			String account = null,fullName=null;
+			String account = null,id = null;
 	    	Map<String,String> userInfo = getAcoountAndFullName(request);
 	    	account = userInfo.get("account");
-	    	fullName = userInfo.get("fullName");
+	    	id = userInfo.get("id");
 	    	
-	    	if(StringUtils.isEmpty(account)){
+	    	if(StringUtils.isEmpty(id)){
 	    		throw new Exception("用户身份校验失败!");
 	    	}
 	    	
@@ -343,7 +340,7 @@ public class FileUploadController {
 	    		queryParam.put("weekdayStr", weekdayStr);
 	    	}
 	    	
-	    	queryParam.put("regcode", account);
+	    	queryParam.put("regcode", id);
 	    	queryParam.put("page", page*pageSize);
 	    	queryParam.put("pageSize", pageSize);
 			List<ResourceMetadata> resList = resMetadataService.getListByParam(queryParam);
@@ -381,10 +378,10 @@ public class FileUploadController {
 	    try{
 	
 			//解析出用户信息
-			String account = null,fullName=null;
+			String account = null,id=null;
 	    	Map<String,String> userInfo = getAcoountAndFullName(request);
 	    	account = userInfo.get("account");
-	    	fullName = userInfo.get("fullName");
+	    	id = userInfo.get("id");
 	    	
 	    	if(StringUtils.isEmpty(account)){
 	    		throw new Exception("用户身份校验失败!");
@@ -397,7 +394,7 @@ public class FileUploadController {
 	    	Map<String,Object> queryParam = new HashMap<String,Object>();
 	    	//flag标识:yearMonth year month day 分别代表要获取的年月日 可逗号分隔
 	    	queryParam.put("flag", flag);
-	    	queryParam.put("regcode", account);
+	    	queryParam.put("regcode", id);
 	    	queryParam.put("yearStr", yearStr);
 	    	queryParam.put("monthStr", monthStr);
 	    	List<String> resList = resMetadataService.getYearMonthDayByParam(queryParam);

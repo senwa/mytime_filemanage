@@ -4,6 +4,8 @@ import java.util.Date;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.zhs.mytime.filemanage.comm.UniqueIdUtil;
+import com.zhs.mytime.filemanage.controller.AuthController;
 import com.zhs.mytime.filemanage.dao.UserMapper;
 import com.zhs.mytime.filemanage.model.User;
 import com.zhs.mytime.filemanage.security.JwtTokenUtil;
@@ -33,7 +36,7 @@ public class AuthService {
 
     @Value("${jwt.tokenHead}")
     private String tokenHead;
-    
+    private static Logger logger = LoggerFactory.getLogger(AuthService.class);
     @Autowired
     public AuthService(
             AuthenticationManager authenticationManager,
@@ -62,6 +65,31 @@ public class AuthService {
         userRepository.insert(userToAdd);
         
         return userToAdd;
+    }
+    //重置密码
+    public boolean resetPwd(User userToReset) {
+    	if(userToReset!=null){
+    		try{
+    			User dbUser = userRepository.getByPhone(userToReset.getPhone());
+        		logger.warn("修改密码:",dbUser.toString());
+        		User userTemp = new User();
+        		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        	    final String rawPassword = userToReset.getPwd();
+        		userTemp.setPwd(encoder.encode(rawPassword));
+        		userTemp.setId(dbUser.getId());
+        		userTemp.setLastPasswordResetDate(new Date());
+        		int upN = userRepository.updateByPrimaryKeySelective(userTemp);
+        		logger.warn("成功修改{}条",upN);
+    		}catch(Exception e){
+    			e.printStackTrace();
+    			logger.error(e.getMessage());
+    			return false;
+    		}
+    		
+    		return true;
+    	}
+    	
+    	return false;
     }
     
     public String generateToken(String username) {

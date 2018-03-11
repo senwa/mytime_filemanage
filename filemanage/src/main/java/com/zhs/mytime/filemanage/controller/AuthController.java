@@ -109,14 +109,21 @@ public class AuthController {
 	    }
 	    
 	    @RequestMapping(value = "${jwt.route.authentication.sms}")
-	    public @ResponseBody ResultMessage sms(@RequestParam String phone) throws AuthenticationException{
+	    public @ResponseBody ResultMessage sms(@RequestParam String phone,@RequestParam String flag) throws AuthenticationException{
 	    	ResultMessage res = new ResultMessage(ResultMessage.SUCCESS, "发送成功");
 	    	try{
 	    		if(StringUtils.isMobile(phone)){
 		    		String random = String.valueOf((new Random().nextInt(8999) + 1000));
 		    		//res.setMessage(random);//直接发到客户端去验证
-		    		SMSUtil.sendMsg(phone, random);
-		    		boolean redisRes = RedisUtil.setString("register"+phone, 60, random);//保留1分钟
+		    		boolean redisRes = false;
+		    		if("register".equalsIgnoreCase(flag)){
+		    			SMSUtil.sendMsg(phone, random,"时光笔记注册验证码:");
+		    			redisRes = RedisUtil.setString("register"+phone, 60, random);//保留1分钟
+		    		}else if("resetpwd".equalsIgnoreCase(flag)){
+		    			SMSUtil.sendMsg(phone, random,"时光笔记重置密码验证码:");
+		    			redisRes = RedisUtil.setString("resetpwd"+phone, 60, random);//保留1分钟
+		    		}
+		    		
 		    		if(!redisRes){
 		    			res.setResult(ResultMessage.FAIL);
 			    		res.setMessage("服务器缓存失败");
@@ -130,4 +137,37 @@ public class AuthController {
 	    	}
 			return res;
 	    }
+	    
+	    @RequestMapping(value = "${jwt.route.authentication.resetpwd}", method = RequestMethod.POST)
+	    public @ResponseBody ResultMessage resetpwd(@RequestBody User resetUser) throws AuthenticationException{
+	    	ResultMessage res = new ResultMessage(ResultMessage.SUCCESS, "修改成功");
+	    	String identifyCode = resetUser.getUnionId();//短信验证码
+	    	if(StringUtils.isNotEmpty(identifyCode)){
+	    		String identifyCodeInRedis = RedisUtil.getString("resetpwd"+resetUser.getPhone());
+	    		if(identifyCode.equalsIgnoreCase(identifyCodeInRedis)){
+	    			RedisUtil.delString("register"+resetUser.getPhone());
+	    			if(StringUtils.isMobile(resetUser.getPhone())){
+	    				 boolean suc = authService.resetPwd(resetUser);
+	    				 if(suc){
+	    					final String token = authService.generateToken(resetUser.getAccount());
+			   	    		 res.setMessage(token);//直接返回token存到客户端
+			   	    		 return res;
+	    			   	    
+	    				 }
+	    			}
+	    			res.setResult(ResultMessage.FAIL);
+	   	    		res.setMessage("密码修改失败!");
+	   	    		return res;
+	    		}else{
+	    			res.setResult(ResultMessage.FAIL);
+	   	    		res.setMessage("短信验证码不正确,请新获取!");
+	   	    		return res;
+	    		}
+	    	}else{
+    			res.setResult(ResultMessage.FAIL);
+   	    		res.setMessage("短信验证码不正确,请新获取!");
+   	    		return res;
+    		}    	
+	    } 
+	    
 }
