@@ -30,6 +30,12 @@
     from user
     where id = #{id,jdbcType=VARCHAR}
   </select>
+  <select id="getByPhone" parameterType="java.lang.String" resultMap="BaseResultMap">
+  		  select 
+		    <include refid="Base_Column_List" />
+		    from user
+		    where phone = #{phone,jdbcType=VARCHAR}
+  </select>
   
    <select id="getByAccountOrEmailOrPhoneOrUnionId" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
