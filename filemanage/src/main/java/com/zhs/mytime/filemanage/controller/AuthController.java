@@ -33,15 +33,11 @@ public class AuthController {
 	    private String tokenHeader;
 	 	
 	 	@Value("${sms.smsAppId}")
-	    private int smsAppId;
+	    private String smsAppId;
 	 	
 	 	@Value("${sms.secrectKey}")
 	    private String secrectKey;
 	 	
-	 	@Value("${sms.templateId}")
-	    private int templateId;
-	 	
-
 	    @Autowired
 	    private AuthService authService;
 
@@ -117,10 +113,10 @@ public class AuthController {
 		    		//res.setMessage(random);//直接发到客户端去验证
 		    		boolean redisRes = false;
 		    		if("register".equalsIgnoreCase(flag)){
-		    			SMSUtil.sendMsg(phone, random,"时光笔记注册验证码:");
+		    			SMSUtil.sendMsg(phone, random,"时光笔记注册验证码:",smsAppId,secrectKey);
 		    			redisRes = RedisUtil.setString("register"+phone, 60, random);//保留1分钟
 		    		}else if("resetpwd".equalsIgnoreCase(flag)){
-		    			SMSUtil.sendMsg(phone, random,"时光笔记重置密码验证码:");
+		    			SMSUtil.sendMsg(phone, random,"时光笔记重置密码验证码:",smsAppId,secrectKey);
 		    			redisRes = RedisUtil.setString("resetpwd"+phone, 60, random);//保留1分钟
 		    		}
 		    		
